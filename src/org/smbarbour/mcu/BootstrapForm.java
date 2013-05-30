@@ -1,6 +1,7 @@
 package org.smbarbour.mcu;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,6 +18,7 @@ import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 public class BootstrapForm extends JWindow {
 
@@ -33,7 +35,16 @@ public class BootstrapForm extends JWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+						System.out.println(info.getName() + " : " + info.getClassName());
+				        if ("Nimbus".equals(info.getName())) {
+				            UIManager.setLookAndFeel(info.getClassName());
+				            break;
+				        }
+				    }
+					if (UIManager.getLookAndFeel().getName().equals("Metal")) {
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					}
 					BootstrapForm frame = new BootstrapForm();
 					frame.setLocationRelativeTo( null );
 					frame.setVisible(true);
