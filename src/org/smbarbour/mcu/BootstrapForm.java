@@ -1,7 +1,6 @@
 package org.smbarbour.mcu;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -70,7 +69,26 @@ public class BootstrapForm extends JWindow {
 		contentPane.add(progressPanel, BorderLayout.SOUTH);
 		progressPanel.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblStatus = new JLabel("Preparing MCUpdater");
+		JPanel primaryProgress = new JPanel();
+		progressPanel.add(primaryProgress, BorderLayout.CENTER);
+		primaryProgress.setLayout(new BorderLayout(0, 0));
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setStringPainted(true);
+		primaryProgress.add(progressBar, BorderLayout.CENTER);
+		progressBar.setValue(65);
+		
+		JLabel lblStatus = new JLabel("Downloading MCUpdater v3.1.0");
+		primaryProgress.add(lblStatus, BorderLayout.SOUTH);
+		
+		JPanel secondaryProgress = new JPanel();
+		progressPanel.add(secondaryProgress, BorderLayout.EAST);
+		secondaryProgress.setLayout(new BorderLayout(0, 0));
+		
+		JProgressBar progressOverall = new JProgressBar();
+		progressOverall.setValue(33);
+		progressOverall.setStringPainted(true);
+		secondaryProgress.add(progressOverall, BorderLayout.CENTER);
 		lblStatus.addMouseListener(new MouseListener() {
 
 			@Override
@@ -95,11 +113,6 @@ public class BootstrapForm extends JWindow {
 			}
 			
 		});
-		progressPanel.add(lblStatus, BorderLayout.SOUTH);
-		
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setValue(65);
-		progressPanel.add(progressBar);
 		
 		JPanel logoPanel = new JPanel() {
 			/**
@@ -137,10 +150,10 @@ public class BootstrapForm extends JWindow {
 		
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLogo.setIcon(new ImageIcon(BootstrapForm.class.getResource("/org/smbarbour/mcu/mcu-logo.png")));
+		lblLogo.setIcon(new ImageIcon(BootstrapForm.class.getResource("/org/smbarbour/mcu/mcu-logo-new.png")));
 		logoPanel.add(lblLogo, BorderLayout.CENTER);
 		
-		setSize(480, 290);
+		setSize(480, 250);
 	}
 
 }
