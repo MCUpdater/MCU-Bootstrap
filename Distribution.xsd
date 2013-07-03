@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/Distribution" xmlns:tns="http://www.example.org/Distribution" elementFormDefault="qualified">
+	<complexType name="LibraryType">
+	
+	</complexType>
 
+	<complexType name="DistributionType">
+		<sequence>
+			<element type="string" name="Version"/>
+			<element type="string" name="ReleaseType"/>
+			<element type="tns:LibraryType" name="Library" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+
+	<element name="Distributions">
+		<complexType>
+			<sequence>
+				<element type="tns:DistributionType" name="Distribution"/>
+			</sequence>
+		</complexType>
+	</element>
+	
 </schema>
