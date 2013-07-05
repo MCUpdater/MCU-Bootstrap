@@ -1,23 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/Distribution" xmlns:tns="http://www.example.org/Distribution" elementFormDefault="qualified">
-	<complexType name="LibraryType">
-	
-	</complexType>
-
-	<complexType name="DistributionType">
-		<sequence>
-			<element type="string" name="Version"/>
-			<element type="string" name="ReleaseType"/>
-			<element type="tns:LibraryType" name="Library" minOccurs="0" maxOccurs="unbounded"/>
-		</sequence>
-	</complexType>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.mcupdater.com/Distribution" xmlns:tns="http://www.mcupdater.com/Distribution" elementFormDefault="qualified">
 
 	<element name="Distributions">
 		<complexType>
 			<sequence>
-				<element type="tns:DistributionType" name="Distribution"/>
+				<element type="tns:DistributionType" name="Distribution" maxOccurs="unbounded" minOccurs="1"/>
 			</sequence>
 		</complexType>
 	</element>
+
+	<complexType name="LibraryType">
+		<sequence>
+			<element type="string" name="filename" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="MD5" maxOccurs="1" minOccurs="1"/>
+			<element type="tns:PlatformType" name="platform" maxOccurs="unbounded" minOccurs="1" />
+			<element type="anyURI" name="downloadURL" maxOccurs="unbounded" minOccurs="1"/>
+		</sequence>
+		<attribute type="string" name="name"/>
+	</complexType>
+
+	<complexType name="DistributionType">
+		<sequence>
+			<element type="string" name="ReleaseType" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="JavaVersion" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Class" maxOccurs="1" minOccurs="1"/>
+			<element type="tns:LibraryType" name="Library" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute type="string" name="name"/>
+	</complexType>
 	
+	<simpleType name="PlatformType">
+		<restriction base="string">
+			<enumeration value="WINDOWS32"/>
+			<enumeration value="WINDOWS64"/>
+			<enumeration value="OSX"/>
+			<enumeration value="LINUX32"/>
+			<enumeration value="LINUX64"/>
+		</restriction>
+	</simpleType>
 </schema>
