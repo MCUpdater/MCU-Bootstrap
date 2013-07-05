@@ -9,6 +9,17 @@
 		</complexType>
 	</element>
 
+	<complexType name="DistributionType">
+		<sequence>
+			<element type="string" name="ReleaseType" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="JavaVersion" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Class" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Params" maxOccurs="1" minOccurs="1"/>
+			<element type="tns:LibraryType" name="Library" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute type="string" name="name"/>
+	</complexType>
+	
 	<complexType name="LibraryType">
 		<sequence>
 			<element type="string" name="Filename" maxOccurs="1" minOccurs="1"/>
@@ -19,16 +30,6 @@
 		<attribute type="string" name="name"/>
 	</complexType>
 
-	<complexType name="DistributionType">
-		<sequence>
-			<element type="string" name="ReleaseType" maxOccurs="1" minOccurs="1"/>
-			<element type="string" name="JavaVersion" maxOccurs="1" minOccurs="1"/>
-			<element type="string" name="Class" maxOccurs="1" minOccurs="1"/>
-			<element type="tns:LibraryType" name="Library" minOccurs="1" maxOccurs="unbounded"/>
-		</sequence>
-		<attribute type="string" name="name"/>
-	</complexType>
-	
 	<simpleType name="PlatformType">
 		<restriction base="string">
 			<enumeration value="WINDOWS32"/>
