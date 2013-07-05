@@ -21,10 +21,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 public class BootstrapForm extends JWindow {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8042232921626373270L;
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
 	/**
@@ -35,7 +32,7 @@ public class BootstrapForm extends JWindow {
 			public void run() {
 				try {
 					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-						System.out.println(info.getName() + " : " + info.getClassName());
+						//System.out.println(info.getName() + " : " + info.getClassName());
 				        if ("Nimbus".equals(info.getName())) {
 				            UIManager.setLookAndFeel(info.getClassName());
 				            break;
