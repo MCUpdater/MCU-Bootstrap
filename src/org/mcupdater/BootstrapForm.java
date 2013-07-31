@@ -19,7 +19,8 @@ import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-public class BootstrapForm extends JWindow {
+public class BootstrapForm extends JWindow
+	implements TrackerListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -151,6 +152,18 @@ public class BootstrapForm extends JWindow {
 		logoPanel.add(lblLogo, BorderLayout.CENTER);
 		
 		setSize(480, 250);
+	}
+
+	@Override
+	public void onQueueFinished(DownloadQueue queue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onQueueProgress(DownloadQueue queue) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
