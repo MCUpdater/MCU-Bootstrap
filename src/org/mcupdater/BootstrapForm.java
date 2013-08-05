@@ -24,6 +24,7 @@ public class BootstrapForm extends JWindow
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JProgressBar progressBar;
 
 	/**
 	 * Launch the application.
@@ -71,22 +72,12 @@ public class BootstrapForm extends JWindow
 		progressPanel.add(primaryProgress, BorderLayout.CENTER);
 		primaryProgress.setLayout(new BorderLayout(0, 0));
 		
-		JProgressBar progressBar = new JProgressBar();
+		progressBar = new JProgressBar();
 		progressBar.setStringPainted(true);
 		primaryProgress.add(progressBar, BorderLayout.CENTER);
-		progressBar.setValue(65);
 		
 		JLabel lblStatus = new JLabel("Downloading MCUpdater v3.1.0");
 		primaryProgress.add(lblStatus, BorderLayout.SOUTH);
-		
-		JPanel secondaryProgress = new JPanel();
-		progressPanel.add(secondaryProgress, BorderLayout.EAST);
-		secondaryProgress.setLayout(new BorderLayout(0, 0));
-		
-		JProgressBar progressOverall = new JProgressBar();
-		progressOverall.setValue(33);
-		progressOverall.setStringPainted(true);
-		secondaryProgress.add(progressOverall, BorderLayout.CENTER);
 		lblStatus.addMouseListener(new MouseListener() {
 
 			@Override
@@ -117,7 +108,7 @@ public class BootstrapForm extends JWindow
 			 * 
 			 */
 			private static final long serialVersionUID = 8686753828984892019L;
-			ImageIcon image = new ImageIcon(BootstrapForm.class.getResource("/org/smbarbour/mcu/bg_main.png"));
+			ImageIcon image = new ImageIcon(BootstrapForm.class.getResource("/org/mcupdater/bg_main.png"));
 			
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -148,7 +139,7 @@ public class BootstrapForm extends JWindow
 		
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLogo.setIcon(new ImageIcon(BootstrapForm.class.getResource("/org/smbarbour/mcu/mcu-logo-new.png")));
+		lblLogo.setIcon(new ImageIcon(BootstrapForm.class.getResource("/org/mcupdater/mcu-logo-new.png")));
 		logoPanel.add(lblLogo, BorderLayout.CENTER);
 		
 		setSize(480, 250);
@@ -162,8 +153,7 @@ public class BootstrapForm extends JWindow
 
 	@Override
 	public void onQueueProgress(DownloadQueue queue) {
-		// TODO Auto-generated method stub
-		
+		progressBar.setValue((int) queue.getProgress());
 	}
 
 }
