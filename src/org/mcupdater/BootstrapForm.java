@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +30,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 public class BootstrapForm extends JWindow
 	implements TrackerListener {
-	private static final ResourceBundle Customization = ResourceBundle.getBundle("customization"); //$NON-NLS-1$
+	//private static final ResourceBundle Customization = ResourceBundle.getBundle("customization"); //$NON-NLS-1$
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
