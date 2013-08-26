@@ -89,7 +89,7 @@ public class BootstrapForm extends JWindow
 			Downloadable dlEntry = new Downloadable(l.getName(),l.getFilename(),l.getMd5(),l.getSize(),l.getDownloadURLs());
 			dl.add(dlEntry);
 		}
-		DownloadQueue queue = new DownloadQueue("Bootstrap", this, dl, basePath );
+		DownloadQueue queue = new DownloadQueue("Bootstrap", this, dl, basePath, null);
 		queue.processQueue(new ThreadPoolExecutor(0, 1, 500, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));		
 	}
 
