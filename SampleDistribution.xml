@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Distributions xmlns:tns="http://www.mcupdater.com/Distribution" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com/Distribution Distribution.xsd ">
+  <tns:Distribution name="MCUDev-2.6.34">
+    <tns:ReleaseType>Develop</tns:ReleaseType>
+    <tns:JavaVersion>1.6</tns:JavaVersion>
+    <tns:Class>org.smbarbour.mcu.Main</tns:Class>
+    <tns:Params></tns:Params>
+    <tns:Library>
+      <tns:Filename>MCUpdater.jar</tns:Filename>
+      <tns:Size>1375236</tns:Size>
+      <tns:MD5>66eae381c1a25651dadbef22a52c6b30</tns:MD5>
+      <tns:Platform>WINDOWS32</tns:Platform>
+      <tns:Platform>WINDOWS64</tns:Platform>
+      <tns:Platform>OSX</tns:Platform>
+      <tns:Platform>LINUX32</tns:Platform>
+      <tns:Platform>LINUX64</tns:Platform>
+      <tns:DownloadURL>http://files.mcupdater.com/develop/MCUpdater-develop.2.6.34.jar</tns:DownloadURL>
+    </tns:Library>
+  </tns:Distribution>
+</tns:Distributions>
