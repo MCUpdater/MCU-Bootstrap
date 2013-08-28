@@ -4,15 +4,15 @@ import java.util.List;
 
 public class Distribution {
 	private String name;
-	private String releaseType;
+	private String friendlyName;
 	private String javaVersion;
 	private String mainClass;
 	private String params;
 	private List<Library> libraries;
 	
-	public Distribution(String name, String releaseType, String javaVersion, String mainClass, String params, List<Library> libraries){
+	public Distribution(String name, String friendlyName, String javaVersion, String mainClass, String params, List<Library> libraries){
 		this.setName(name);
-		this.setReleaseType(releaseType);
+		this.setFriendlyName(friendlyName);
 		this.setJavaVersion(javaVersion);
 		this.setMainClass(mainClass);
 		this.setParams(params);
@@ -27,12 +27,12 @@ public class Distribution {
 		this.name = name;
 	}
 
-	public String getReleaseType() {
-		return releaseType;
+	public String getFriendlyName() {
+		return friendlyName;
 	}
 
-	public void setReleaseType(String releaseType) {
-		this.releaseType = releaseType;
+	public void setFriendlyName(String releaseType) {
+		this.friendlyName = releaseType;
 	}
 
 	public String getJavaVersion() {

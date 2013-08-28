@@ -11,7 +11,7 @@
 
 	<complexType name="DistributionType">
 		<sequence>
-			<element type="string" name="ReleaseType" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="FriendlyName" maxOccurs="1" minOccurs="1"/>
 			<element type="string" name="JavaVersion" maxOccurs="1" minOccurs="1"/>
 			<element type="string" name="Class" maxOccurs="1" minOccurs="1"/>
 			<element type="string" name="Params" maxOccurs="1" minOccurs="1"/>

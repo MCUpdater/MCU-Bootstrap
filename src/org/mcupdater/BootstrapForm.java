@@ -5,45 +5,64 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
+
 public class BootstrapForm extends JWindow
 	implements TrackerListener {
-	//private static final ResourceBundle Customization = ResourceBundle.getBundle("customization"); //$NON-NLS-1$
+	private static final ResourceBundle config = ResourceBundle.getBundle("config"); //$NON-NLS-1$
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JProgressBar progressBar;
 	private JLabel lblStatus;
 	private Distribution distro;
-	private File basePath = new File("/home/sbarbour/Bootstrap-test");
+	private static File basePath;// = new File("/home/sbarbour/Bootstrap-test");
 	private String[] passthroughParams;
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(final String[] args) {
+		String customPath = config.getString("customPath");
+		if(System.getProperty("os.name").startsWith("Windows"))
+		{
+			basePath = new File(new File(System.getenv("APPDATA")),".MCUpdater");
+		} else if(System.getProperty("os.name").startsWith("Mac"))
+		{
+			basePath = new File(new File(new File(new File(System.getProperty("user.home")),"Library"),"Application Support"),"MCUpdater");
+		}
+		else
+		{
+			basePath = new File(new File(System.getProperty("user.home")),".MCUpdater");
+		}
+		if (!customPath.isEmpty()) {
+			basePath = new File(customPath);
+		}
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -83,7 +102,12 @@ public class BootstrapForm extends JWindow
 		System.out.println("System.getProperty('sun.arch.data.model') == '" + System.getProperty("sun.arch.data.model") + "'");
 // ***
 		PlatformType thisPlatform = PlatformType.valueOf(System.getProperty("os.name").toUpperCase() + System.getProperty("sun.arch.data.model"));
-		distro = DistributionParser.loadFromURL("file:///home/sbarbour/SampleDistribution.xml", "MCUDev-2.6.34", System.getProperty("java.version").substring(0,3), thisPlatform);
+		distro = DistributionParser.loadFromURL(config.getString("bootstrapURL"), config.getString("distribution"), System.getProperty("java.version").substring(0,3), thisPlatform);
+		if (distro == null) {
+			JOptionPane.showMessageDialog(this, "Failed to read configured distribution!","MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
+		lblStatus.setText("Downloading " + distro.getFriendlyName());
 		Collection<Downloadable> dl = new ArrayList<Downloadable>();
 		for (Library l : distro.getLibraries()) {
 			Downloadable dlEntry = new Downloadable(l.getName(),l.getFilename(),l.getMd5(),l.getSize(),l.getDownloadURLs());
@@ -114,34 +138,11 @@ public class BootstrapForm extends JWindow
 		
 		progressBar = new JProgressBar();
 		progressBar.setStringPainted(true);
+		progressBar.setMaximum(10000);
 		primaryProgress.add(progressBar, BorderLayout.CENTER);
 		
-		lblStatus = new JLabel("Downloading MCUpdater v3.1.0");
+		lblStatus = new JLabel();
 		primaryProgress.add(lblStatus, BorderLayout.SOUTH);
-		lblStatus.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.exit(0);
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-			
-		});
 		
 		JPanel logoPanel = new JPanel() {
 			/**
@@ -187,55 +188,63 @@ public class BootstrapForm extends JWindow
 
 	@Override
 	public void onQueueFinished(DownloadQueue queue) {
-		// TODO Auto-generated method stub
-		System.out.println("Finished");
-		lblStatus.setText("Finished!");
-		StringBuilder sbClassPath = new StringBuilder();
-		for (Library lib : distro.getLibraries()){
-			sbClassPath.append(cpDelimiter() + (new File(basePath, lib.getFilename())).getAbsolutePath());
-		}
-		StringBuilder sbParams = new StringBuilder();
-		sbParams.append(distro.getParams());
-		try {
-			String javaBin = "java";
-			File binDir;
-			if (System.getProperty("os.name").startsWith("Mac")) {
-				binDir = new File(new File(System.getProperty("java.home")), "Commands");
-			} else {
-				binDir = new File(new File(System.getProperty("java.home")), "bin");
+		if (queue.getFailedFileCount() > 0) {
+			lblStatus.setText("Failed!");
+			StringBuilder msg = new StringBuilder("Failed to download:\n");
+			for (Downloadable entry : queue.getFailures()) {
+				msg.append("   " + entry.getFilename() + "\n");
 			}
-			if( binDir.exists() ) {
-				javaBin = (new File(binDir, "java")).getAbsolutePath();
+			JOptionPane.showMessageDialog(this, msg.toString(),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
+			System.exit(-2);
+		} else {
+			lblStatus.setText("Finished!");
+			StringBuilder sbClassPath = new StringBuilder();
+			for (Library lib : distro.getLibraries()){
+				sbClassPath.append(cpDelimiter() + (new File(basePath, lib.getFilename())).getAbsolutePath());
 			}
-			List<String> args = new ArrayList<String>();
-			args.add(javaBin);
-			args.add("-cp");
-			args.add(sbClassPath.toString().substring(1));
-			args.add(distro.getMainClass());
-			if (distro.getParams() != null) { args.add(distro.getParams());}
-			for (String param : this.passthroughParams) {
-				args.add(param);
+			StringBuilder sbParams = new StringBuilder();
+			sbParams.append(distro.getParams());
+			try {
+				String javaBin = "java";
+				File binDir;
+				if (System.getProperty("os.name").startsWith("Mac")) {
+					binDir = new File(new File(System.getProperty("java.home")), "Commands");
+				} else {
+					binDir = new File(new File(System.getProperty("java.home")), "bin");
+				}
+				if( binDir.exists() ) {
+					javaBin = (new File(binDir, "java")).getAbsolutePath();
+				}
+				List<String> args = new ArrayList<String>();
+				args.add(javaBin);
+				args.add("-cp");
+				args.add(sbClassPath.toString().substring(1));
+				args.add(distro.getMainClass());
+				Map<String,String> fields = new HashMap<String,String>();
+				StrSubstitutor fieldReplacer = new StrSubstitutor(fields);
+				fields.put("defaultPack", config.getString("defaultPack"));
+				fields.put("MCURoot", basePath.getAbsolutePath());
+				if (distro.getParams() != null) { args.addAll(Arrays.asList(fieldReplacer.replace(distro.getParams()).split(" ")));}
+				args.addAll(Arrays.asList(this.passthroughParams));
+				String[] params = args.toArray(new String[0]);
+				System.out.println(Arrays.toString(params));
+				Process p = Runtime.getRuntime().exec(params);
+				if (p != null) {
+					Thread.sleep(5000);
+					System.exit(0);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			String[] params = args.toArray(new String[0]);
-			System.out.println(Arrays.toString(params));
-			Process p = Runtime.getRuntime().exec(params);
-			if (p != null) {
-				Thread.sleep(5000);
-				System.exit(0);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void onQueueProgress(DownloadQueue queue) {
 		lblStatus.setText("Downloading: " + queue.getName());
-		progressBar.setValue((int) (queue.getProgress()*100.0F));
+		progressBar.setValue((int) (queue.getProgress()*10000.0F));
 	}
 
 	@Override

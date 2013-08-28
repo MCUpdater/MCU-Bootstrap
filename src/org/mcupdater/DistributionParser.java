@@ -103,7 +103,7 @@ public class DistributionParser {
 
 	private static Distribution getDistribution(Element el, PlatformType pt) {
 		String name = el.getAttribute("name");
-		String releaseType = getTextValue(el, "ReleaseType");
+		String friendlyName = getTextValue(el, "FriendlyName");
 		String javaVersion = getTextValue(el, "JavaVersion");
 		String mainClass = getTextValue(el, "Class");
 		String params = getTextValue(el, "Params");
@@ -111,10 +111,10 @@ public class DistributionParser {
 		NodeList nl = el.getElementsByTagName("Library");
 		for(int i = 0; i < nl.getLength(); i++) {
 			Element elLib = (Element)nl.item(i);
-			Library l = getLibrary(elLib, pt); //TODO
+			Library l = getLibrary(elLib, pt);
 			libraries.add(l);
 		}
-		return new Distribution(name, releaseType, javaVersion, mainClass, params, libraries);
+		return new Distribution(name, friendlyName, javaVersion, mainClass, params, libraries);
 	}
 
 	private static Library getLibrary(Element el, PlatformType pt) {
