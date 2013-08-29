@@ -112,12 +112,25 @@ public class DistributionParser {
 		for(int i = 0; i < nl.getLength(); i++) {
 			Element elLib = (Element)nl.item(i);
 			Library l = getLibrary(elLib, pt);
-			libraries.add(l);
+			if (!(l == null)) {
+				libraries.add(l);
+			}
 		}
 		return new Distribution(name, friendlyName, javaVersion, mainClass, params, libraries);
 	}
 
 	private static Library getLibrary(Element el, PlatformType pt) {
+		boolean validOnPlatform = false;
+		NodeList platforms = el.getElementsByTagName("Platform");
+		for (int i = 0; i < platforms.getLength(); i++){
+			if (((Element)platforms.item(i)).getTextContent().equals(pt.toString())) {
+				validOnPlatform = true;
+				break;
+			}
+		}
+		if (!validOnPlatform) {
+			return null;
+		}
 		String name = el.getAttribute("name");
 		String filename = getTextValue(el, "Filename");
 		long size = Long.parseLong(getTextValue(el, "Size"));
