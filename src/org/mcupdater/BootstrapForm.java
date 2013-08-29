@@ -118,7 +118,7 @@ public class BootstrapForm extends JWindow
 			Downloadable dlEntry = new Downloadable(l.getName(),l.getFilename(),l.getMd5(),l.getSize(),l.getDownloadURLs());
 			dl.add(dlEntry);
 		}
-		DownloadQueue queue = new DownloadQueue("Bootstrap", "Bootstrap", this, dl, basePath, null);
+		DownloadQueue queue = new DownloadQueue("Bootstrap", "Bootstrap", this, dl, new File(basePath,"lib"), null);
 		queue.processQueue(new ThreadPoolExecutor(0, 1, 500, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));		
 	}
 
@@ -205,7 +205,7 @@ public class BootstrapForm extends JWindow
 			lblStatus.setText("Finished!");
 			StringBuilder sbClassPath = new StringBuilder();
 			for (Library lib : distro.getLibraries()){
-				sbClassPath.append(cpDelimiter() + (new File(basePath, lib.getFilename())).getAbsolutePath());
+				sbClassPath.append(cpDelimiter() + (new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
 			}
 			StringBuilder sbParams = new StringBuilder();
 			sbParams.append(distro.getParams());
