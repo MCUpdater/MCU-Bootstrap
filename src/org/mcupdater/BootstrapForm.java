@@ -102,7 +102,7 @@ public class BootstrapForm extends JWindow
 		System.out.println("System.getProperty('sun.arch.data.model') == '" + System.getProperty("sun.arch.data.model") + "'");
 // ***
 		PlatformType thisPlatform;
-		if (System.getProperty("os.name").toUpperCase().equals("MAC OS")) {
+		if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
 			thisPlatform = PlatformType.OSX64;
 		} else {
 			thisPlatform = PlatformType.valueOf(System.getProperty("os.name").toUpperCase() + System.getProperty("sun.arch.data.model"));
