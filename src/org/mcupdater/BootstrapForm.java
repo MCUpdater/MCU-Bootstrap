@@ -222,6 +222,9 @@ public class BootstrapForm extends JWindow
 				}
 				List<String> args = new ArrayList<String>();
 				args.add(javaBin);
+				if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
+					args.add("-XstartOnFirstThread");
+				}
 				args.add("-cp");
 				args.add(sbClassPath.toString().substring(1));
 				args.add(distro.getMainClass());
