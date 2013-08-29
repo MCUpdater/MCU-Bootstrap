@@ -41,6 +41,7 @@ public class BootstrapForm extends JWindow
 	private JLabel lblStatus;
 	private Distribution distro;
 	private static File basePath;// = new File("/home/sbarbour/Bootstrap-test");
+	private static PlatformType thisPlatform;
 	private String[] passthroughParams;
 	
 	/**
@@ -51,13 +52,16 @@ public class BootstrapForm extends JWindow
 		if(System.getProperty("os.name").startsWith("Windows"))
 		{
 			basePath = new File(new File(System.getenv("APPDATA")),".MCUpdater");
+			thisPlatform = PlatformType.valueOf("WINDOWS" + System.getProperty("sun.arch.data.model"));
 		} else if(System.getProperty("os.name").startsWith("Mac"))
 		{
 			basePath = new File(new File(new File(new File(System.getProperty("user.home")),"Library"),"Application Support"),"MCUpdater");
+			thisPlatform = PlatformType.valueOf("OSX64");
 		}
 		else
 		{
 			basePath = new File(new File(System.getProperty("user.home")),".MCUpdater");
+			thisPlatform = PlatformType.valueOf("LINUX" + System.getProperty("sun.arch.data.model"));
 		}
 		if (!customPath.isEmpty()) {
 			basePath = new File(customPath);
@@ -101,12 +105,6 @@ public class BootstrapForm extends JWindow
 		System.out.println("System.getProperty('java.vendor') == '" + System.getProperty("java.vendor") + "'");
 		System.out.println("System.getProperty('sun.arch.data.model') == '" + System.getProperty("sun.arch.data.model") + "'");
 // ***
-		PlatformType thisPlatform;
-		if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
-			thisPlatform = PlatformType.OSX64;
-		} else {
-			thisPlatform = PlatformType.valueOf(System.getProperty("os.name").toUpperCase() + System.getProperty("sun.arch.data.model"));
-		}
 		distro = DistributionParser.loadFromURL(config.getString("bootstrapURL"), config.getString("distribution"), System.getProperty("java.version").substring(0,3), thisPlatform);
 		if (distro == null) {
 			JOptionPane.showMessageDialog(this, "Failed to read configured distribution!","MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
