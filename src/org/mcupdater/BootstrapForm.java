@@ -232,7 +232,10 @@ public class BootstrapForm extends JWindow
 				if (distro.getParams() != null) { args.addAll(Arrays.asList(fieldReplacer.replace(distro.getParams()).split(" ")));}
 				args.addAll(Arrays.asList(this.passthroughParams));
 				String[] params = args.toArray(new String[0]);
-				System.out.println(Arrays.toString(params));
+				for (String s : args) {
+					System.out.print(s + " ");
+				}
+				System.out.print("\n");
 				Process p = Runtime.getRuntime().exec(params);
 				if (p != null) {
 					Thread.sleep(5000);
