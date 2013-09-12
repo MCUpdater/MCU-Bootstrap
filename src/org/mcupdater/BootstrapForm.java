@@ -222,6 +222,8 @@ public class BootstrapForm extends JWindow
 				args.add(javaBin);
 				if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
 					args.add("-XstartOnFirstThread");
+					args.add("-Xdock:name=" + distro.getFriendlyName());
+					args.add("-Xdock:icon=" + handleWhitespace((new File(new File(basePath, "lib"), "mcu-icon.icns")).getAbsolutePath()));
 				}
 				args.add("-cp");
 				args.add(sbClassPath.toString().substring(1));
