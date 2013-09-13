@@ -203,7 +203,7 @@ public class BootstrapForm extends JWindow
 			lblStatus.setText("Finished!");
 			StringBuilder sbClassPath = new StringBuilder();
 			for (Library lib : distro.getLibraries()){
-				sbClassPath.append(cpDelimiter() + handleWhitespace((new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath()));
+				sbClassPath.append(cpDelimiter() + (new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
 			}
 			StringBuilder sbParams = new StringBuilder();
 			sbParams.append(distro.getParams());
@@ -223,7 +223,7 @@ public class BootstrapForm extends JWindow
 				if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
 					args.add("-XstartOnFirstThread");
 					args.add("-Xdock:name=" + distro.getFriendlyName());
-					args.add("-Xdock:icon=" + handleWhitespace((new File(new File(basePath, "lib"), "mcu-icon.icns")).getAbsolutePath()));
+					args.add("-Xdock:icon=" + (new File(new File(basePath, "lib"), "mcu-icon.icns")).getAbsolutePath());
 				}
 				args.add("-cp");
 				args.add(sbClassPath.toString().substring(1));
@@ -231,8 +231,16 @@ public class BootstrapForm extends JWindow
 				Map<String,String> fields = new HashMap<String,String>();
 				StrSubstitutor fieldReplacer = new StrSubstitutor(fields);
 				fields.put("defaultPack", config.getString("defaultPack"));
-				fields.put("MCURoot", handleWhitespace(basePath.getAbsolutePath()));
-				if (distro.getParams() != null) { args.addAll(Arrays.asList(fieldReplacer.replace(distro.getParams()).split(" ")));}
+				fields.put("MCURoot", basePath.getAbsolutePath());
+				//if (distro.getParams() != null) { args.addAll(Arrays.asList(fieldReplacer.replace(distro.getParams()).split(" ")));}
+				if (distro.getParams() != null) {
+					String[] fieldArr = distro.getParams().split(" ");
+					for (int i = 0; i < fieldArr.length; i++) {
+						fieldArr[i] = fieldReplacer.replace(fieldArr[i]);
+					}
+					args.addAll(Arrays.asList(fieldArr));					
+				}
+
 				args.addAll(Arrays.asList(this.passthroughParams));
 				String[] params = args.toArray(new String[0]);
 				for (String s : args) {
@@ -269,15 +277,6 @@ public class BootstrapForm extends JWindow
 			return ";";
 		} else {
 			return ":";
-		}
-	}
-
-	private String handleWhitespace(String path) {
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Windows")) {
-			return "\"" + path + "\"";
-		} else {
-			return path.replace(" ", "\\ ");
 		}
 	}
 }
