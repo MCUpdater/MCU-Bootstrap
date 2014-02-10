@@ -1,35 +1,21 @@
 package org.mcupdater;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import org.apache.commons.lang3.text.StrSubstitutor;
+
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.io.InputStreamReader;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JWindow;
-import javax.swing.SwingConstants;
-import javax.swing.JProgressBar;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
-import org.apache.commons.lang3.text.StrSubstitutor;
 
 public class BootstrapForm extends JWindow
 	implements TrackerListener {
@@ -249,12 +235,15 @@ public class BootstrapForm extends JWindow
 				System.out.print("\n");
 				Process p = Runtime.getRuntime().exec(params);
 				if (p != null) {
-					Thread.sleep(5000);
+					String line;
+					BufferedReader input = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					while ((line = input.readLine()) != null) {
+						System.out.println(line);
+					}
+					//Thread.sleep(5000);
 					System.exit(0);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
