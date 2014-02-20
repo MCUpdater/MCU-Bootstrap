@@ -1,5 +1,8 @@
 package org.mcupdater;
 
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
 import javax.swing.*;
@@ -29,12 +32,27 @@ public class BootstrapForm extends JWindow
 	private static File basePath;// = new File("/home/sbarbour/Bootstrap-test");
 	private static PlatformType thisPlatform;
 	private String[] passthroughParams;
-	
+	private static String defaultPack;
+	protected static BootstrapForm frame;
+	private static boolean debug = false;
+
 	/**
 	 * Launch the application.
 	 */
 	public static void main(final String[] args) {
-		String customPath = config.getString("customPath");
+		OptionParser optParser = new OptionParser();
+		ArgumentAcceptingOptionSpec<String> bootstrapSpec = optParser.accepts("bootstrap").withRequiredArg().ofType(String.class).defaultsTo(config.getString("bootstrapURL"));
+		ArgumentAcceptingOptionSpec<String> distSpec = optParser.accepts("distribution").withRequiredArg().ofType(String.class).defaultsTo(config.getString("distribution"));
+		ArgumentAcceptingOptionSpec<String> defaultpackSpec = optParser.accepts("defaultpack").withRequiredArg().ofType(String.class).defaultsTo(config.getString("defaultPack"));
+		ArgumentAcceptingOptionSpec<String> rootSpec = optParser.accepts("MCURoot").withRequiredArg().ofType(String.class).defaultsTo(config.getString("customPath"));
+		optParser.accepts("debug");
+		final OptionSet options = optParser.parse(args);
+		defaultPack = options.valueOf(defaultpackSpec);
+		if (options.has("debug")) {
+			debug = true;
+		}
+
+		String customPath = options.valueOf(rootSpec);
 		if(System.getProperty("os.name").startsWith("Windows"))
 		{
 			basePath = new File(new File(System.getenv("APPDATA")),".MCUpdater");
@@ -52,25 +70,29 @@ public class BootstrapForm extends JWindow
 		if (!customPath.isEmpty()) {
 			basePath = new File(customPath);
 		}
+		final Map<String, Object> opts = new HashMap<String, Object>();
+		opts.put("bootstrapURL", options.valueOf(bootstrapSpec));
+		opts.put("distribution", options.valueOf(distSpec));
 
 		EventQueue.invokeLater(new Runnable() {
+
 			public void run() {
 				try {
 					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 						//System.out.println(info.getName() + " : " + info.getClassName());
-				        if ("Nimbus".equals(info.getName())) {
-				            UIManager.setLookAndFeel(info.getClassName());
-				            break;
-				        }
-				    }
+						if ("Nimbus".equals(info.getName())) {
+							UIManager.setLookAndFeel(info.getClassName());
+							break;
+						}
+					}
 					if (UIManager.getLookAndFeel().getName().equals("Metal")) {
 						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					}
-					BootstrapForm frame = new BootstrapForm();
+					frame = new BootstrapForm();
 					frame.setPassthroughParams(args);
 					frame.setLocationRelativeTo( null );
 					frame.setVisible(true);
-					frame.doWork();
+					frame.doWork(opts);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -82,7 +104,7 @@ public class BootstrapForm extends JWindow
 		this.passthroughParams = args;
 	}
 	
-	protected void doWork() {
+	protected void doWork(Map<String, Object> opts) {
 // *** Debug section
 		System.out.println("System.getProperty('os.name') == '" + System.getProperty("os.name") + "'");
 		System.out.println("System.getProperty('os.version') == '" + System.getProperty("os.version") + "'");
@@ -93,7 +115,7 @@ public class BootstrapForm extends JWindow
 // ***
 		distro = DistributionParser.loadFromURL(config.getString("bootstrapURL"), config.getString("distribution"), System.getProperty("java.version").substring(0,3), thisPlatform);
 		if (distro == null) {
-			JOptionPane.showMessageDialog(this, "Failed to read configured distribution!","MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + (String)opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		lblStatus.setText("Downloading " + distro.getFriendlyName());
@@ -188,9 +210,15 @@ public class BootstrapForm extends JWindow
 		} else {
 			lblStatus.setText("Finished!");
 			StringBuilder sbClassPath = new StringBuilder();
-			for (Library lib : distro.getLibraries()){
-				sbClassPath.append(cpDelimiter() + (new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
+			if (System.getProperty("os.name").startsWith("Mac")) {
+				sbClassPath.append(cpDelimiter() + ".");
 			}
+			for (Library lib : distro.getLibraries()){
+				if (lib.getFilename().endsWith("jar")) {
+					sbClassPath.append(cpDelimiter() + (new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
+				}
+			}
+			sbClassPath.append(cpDelimiter() + System.getProperty("java.home") + File.separator + "lib/jfxrt.jar" );
 			StringBuilder sbParams = new StringBuilder();
 			sbParams.append(distro.getParams());
 			try {
@@ -206,8 +234,9 @@ public class BootstrapForm extends JWindow
 				}
 				List<String> args = new ArrayList<String>();
 				args.add(javaBin);
+				args.add("-Djavafx.verbose=true");
 				if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
-					args.add("-XstartOnFirstThread");
+					//args.add("-XstartOnFirstThread");
 					args.add("-Xdock:name=" + distro.getFriendlyName());
 					args.add("-Xdock:icon=" + (new File(new File(basePath, "lib"), "mcu-icon.icns")).getAbsolutePath());
 				}
@@ -228,22 +257,36 @@ public class BootstrapForm extends JWindow
 				}
 
 				args.addAll(Arrays.asList(this.passthroughParams));
+				args.remove("--debug");
 				String[] params = args.toArray(new String[0]);
 				for (String s : args) {
 					System.out.print(s + " ");
 				}
 				System.out.print("\n");
-				Process p = Runtime.getRuntime().exec(params);
-				if (p != null) {
-					String line;
-					BufferedReader input = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-					while ((line = input.readLine()) != null) {
-						System.out.println(line);
+				if ( debug == false ) {
+					Process p = Runtime.getRuntime().exec(params);
+					if (p != null) {
+						Thread.sleep(5000);
+						System.exit(0);
 					}
-					//Thread.sleep(5000);
-					System.exit(0);
+				} else {
+					ProcessBuilder pb = new ProcessBuilder(params);
+					pb.redirectErrorStream(true);
+					Process p = pb.start();
+					Thread.sleep(2000);
+					frame.setVisible(false);
+					if (p != null) {
+						String line;
+						BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+						while ((line = input.readLine()) != null) {
+							System.out.println(line);
+						}
+						System.exit(0);
+					}
 				}
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -261,11 +304,6 @@ public class BootstrapForm extends JWindow
 	}
 
 	private String cpDelimiter() {
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Windows")) {
-			return ";";
-		} else {
-			return ":";
-		}
+		return File.pathSeparator;
 	}
 }

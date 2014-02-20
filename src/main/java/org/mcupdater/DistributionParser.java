@@ -1,5 +1,11 @@
 package org.mcupdater;
 
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -7,16 +13,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class DistributionParser {
 
@@ -75,13 +71,19 @@ public class DistributionParser {
 			NodeList distributions = parent.getElementsByTagName("Distribution");
 			for (int i = 0; i < distributions.getLength(); i++) {
 				docEle = (Element)distributions.item(i);
-				if (docEle.getAttribute("name").equals(distName) && getTextValue(docEle, "JavaVersion").equals(javaVersion)) { break; }
+				System.out.println(docEle.getAttribute("name") + " - " + docEle.getElementsByTagName("FriendlyName").item(0).getTextContent());
+				if (docEle.getAttribute("name").equals(distName)) {
+					NodeList versions = docEle.getElementsByTagName("JavaVersion");
+					for (int verIndex = 0; verIndex < versions.getLength(); verIndex++) {
+						System.out.println("--" + versions.item(verIndex).getTextContent());
+						if (versions.item(verIndex).getTextContent().equals(javaVersion)) { return getDistribution(docEle, pt); }
+					}
+				}
 			}
 		} else {
 			throw new RuntimeException("Malformed XML!");
 		}
-		return getDistribution(docEle, pt); 
-		
+		return null;
 	}
 
 	private static String getTextValue(Element ele, String tagName) {
