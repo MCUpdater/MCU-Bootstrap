@@ -138,7 +138,7 @@ public class BootstrapForm extends JWindow
 			 * 
 			 */
 			private static final long serialVersionUID = 8686753828984892019L;
-			ImageIcon image = new ImageIcon(BootstrapForm.class.getResource("/org/mcupdater/bg_main.png"));
+			ImageIcon image = new ImageIcon(BootstrapForm.class.getResource("/bg_main.png"));
 			
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -169,7 +169,7 @@ public class BootstrapForm extends JWindow
 		
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLogo.setIcon(new ImageIcon(BootstrapForm.class.getResource("/org/mcupdater/mcu-logo-new.png")));
+		lblLogo.setIcon(new ImageIcon(BootstrapForm.class.getResource("/mcu-logo-new.png")));
 		logoPanel.add(lblLogo, BorderLayout.CENTER);
 		
 		setSize(480, 250);
