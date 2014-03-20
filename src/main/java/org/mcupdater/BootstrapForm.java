@@ -4,6 +4,9 @@ import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.mcupdater.downloadlib.DownloadQueue;
+import org.mcupdater.downloadlib.Downloadable;
+import org.mcupdater.downloadlib.TrackerListener;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -21,7 +24,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class BootstrapForm extends JWindow
-	implements TrackerListener {
+	implements TrackerListener
+{
 	private static final ResourceBundle config = ResourceBundle.getBundle("config"); //$NON-NLS-1$
 	
 	private static final long serialVersionUID = 1L;
