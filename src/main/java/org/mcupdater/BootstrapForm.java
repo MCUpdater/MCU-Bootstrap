@@ -1,8 +1,6 @@
 package org.mcupdater;
 
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
+import joptsimple.*;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.mcupdater.downloadlib.DownloadQueue;
 import org.mcupdater.downloadlib.Downloadable;
@@ -45,15 +43,27 @@ public class BootstrapForm extends JWindow
 	 */
 	public static void main(final String[] args) {
 		OptionParser optParser = new OptionParser();
-		ArgumentAcceptingOptionSpec<String> bootstrapSpec = optParser.accepts("bootstrap").withRequiredArg().ofType(String.class).defaultsTo(config.getString("bootstrapURL"));
-		ArgumentAcceptingOptionSpec<String> distSpec = optParser.accepts("distribution").withRequiredArg().ofType(String.class).defaultsTo(config.getString("distribution"));
-		ArgumentAcceptingOptionSpec<String> defaultpackSpec = optParser.accepts("defaultpack").withRequiredArg().ofType(String.class).defaultsTo(config.getString("defaultPack"));
-		ArgumentAcceptingOptionSpec<String> rootSpec = optParser.accepts("MCURoot").withRequiredArg().ofType(String.class).defaultsTo(config.getString("customPath"));
-		optParser.accepts("debug");
+		optParser.allowsUnrecognizedOptions();
+		optParser.accepts("help", "Show help").forHelp();
+		optParser.formatHelpWith(new BuiltinHelpFormatter(160,3));
+		ArgumentAcceptingOptionSpec<String> bootstrapSpec = optParser.accepts("bootstrap", "Bootstrap URL").withRequiredArg().ofType(String.class).defaultsTo(config.getString("bootstrapURL"));
+		ArgumentAcceptingOptionSpec<String> distSpec = optParser.accepts("distribution", "MCUpdater distribution").withRequiredArg().ofType(String.class).defaultsTo(config.getString("distribution"));
+		ArgumentAcceptingOptionSpec<String> defaultpackSpec = optParser.accepts("defaultpack", "Default pack URL").withRequiredArg().ofType(String.class).defaultsTo(config.getString("defaultPack"));
+		ArgumentAcceptingOptionSpec<String> rootSpec = optParser.accepts("MCURoot", "Custom folder for MCUpdater").withRequiredArg().ofType(String.class).defaultsTo(config.getString("customPath"));
+		final NonOptionArgumentSpec<String> nonOpts = optParser.nonOptions();
+		optParser.accepts("debug","Show console output from MCUpdater");
 		final OptionSet options = optParser.parse(args);
 		defaultPack = options.valueOf(defaultpackSpec);
 		if (options.has("debug")) {
 			debug = true;
+		}
+		if (options.has("help")) {
+			try {
+				optParser.printHelpOn(System.out);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return;
 		}
 
 		String customPath = options.valueOf(rootSpec);
@@ -93,7 +103,10 @@ public class BootstrapForm extends JWindow
 						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					}
 					frame = new BootstrapForm();
-					frame.setPassthroughParams(args);
+					List<String> passthrough = new ArrayList<String>();
+					passthrough.addAll(options.valuesOf(nonOpts));
+					passthrough.addAll(Arrays.asList(config.getString("passthroughArgs")));
+					frame.setPassthroughParams(passthrough.toArray(new String[0]));
 					frame.setLocationRelativeTo( null );
 					frame.setVisible(true);
 					frame.doWork(opts);
@@ -249,7 +262,7 @@ public class BootstrapForm extends JWindow
 				args.add(distro.getMainClass());
 				Map<String,String> fields = new HashMap<String,String>();
 				StrSubstitutor fieldReplacer = new StrSubstitutor(fields);
-				fields.put("defaultPack", config.getString("defaultPack"));
+				fields.put("defaultPack", defaultPack);
 				fields.put("MCURoot", basePath.getAbsolutePath());
 				//if (distro.getParams() != null) { args.addAll(Arrays.asList(fieldReplacer.replace(distro.getParams()).split(" ")));}
 				if (distro.getParams() != null) {
@@ -261,19 +274,18 @@ public class BootstrapForm extends JWindow
 				}
 
 				args.addAll(Arrays.asList(this.passthroughParams));
-				args.remove("--debug");
 				String[] params = args.toArray(new String[0]);
-				for (String s : args) {
-					System.out.print(s + " ");
-				}
-				System.out.print("\n");
-				if ( debug == false ) {
+				if (!debug) {
 					Process p = Runtime.getRuntime().exec(params);
 					if (p != null) {
 						Thread.sleep(5000);
 						System.exit(0);
 					}
 				} else {
+					for (String s : args) {
+						System.out.print((s.contains(" ") ? ("\"" + s + "\"") : s) + " ");
+					}
+					System.out.print("\n");
 					ProcessBuilder pb = new ProcessBuilder(params);
 					pb.redirectErrorStream(true);
 					Process p = pb.start();
