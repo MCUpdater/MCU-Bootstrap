@@ -21,15 +21,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static java.io.File.pathSeparator;
+
 public class BootstrapForm extends JWindow
 	implements TrackerListener
 {
 	private static final ResourceBundle config = ResourceBundle.getBundle("config"); //$NON-NLS-1$
 	
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JProgressBar progressBar;
-	private JLabel lblStatus;
+	private final JProgressBar progressBar;
+	private final JLabel lblStatus;
 	private Distribution distro;
 	private static File basePath;// = new File("/home/sbarbour/Bootstrap-test");
 	private static PlatformType thisPlatform;
@@ -106,7 +107,7 @@ public class BootstrapForm extends JWindow
 					List<String> passthrough = new ArrayList<String>();
 					passthrough.addAll(options.valuesOf(nonOpts));
 					passthrough.addAll(Arrays.asList(config.getString("passthroughArgs")));
-					frame.setPassthroughParams(passthrough.toArray(new String[0]));
+					frame.setPassthroughParams(passthrough.toArray(new String[passthrough.size()]));
 					frame.setLocationRelativeTo( null );
 					frame.setVisible(true);
 					frame.doWork(opts);
@@ -132,7 +133,7 @@ public class BootstrapForm extends JWindow
 // ***
 		distro = DistributionParser.loadFromURL(config.getString("bootstrapURL"), config.getString("distribution"), System.getProperty("java.version").substring(0,3), thisPlatform);
 		if (distro == null) {
-			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + (String)opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		lblStatus.setText("Downloading " + distro.getFriendlyName());
@@ -150,7 +151,7 @@ public class BootstrapForm extends JWindow
 	 */
 	public BootstrapForm() {
 		// setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
@@ -177,7 +178,7 @@ public class BootstrapForm extends JWindow
 			 * 
 			 */
 			private static final long serialVersionUID = 8686753828984892019L;
-			ImageIcon image = new ImageIcon(BootstrapForm.class.getResource("/bg_main.png"));
+			final ImageIcon image = new ImageIcon(BootstrapForm.class.getResource("/bg_main.png"));
 			
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -220,7 +221,7 @@ public class BootstrapForm extends JWindow
 			lblStatus.setText("Failed!");
 			StringBuilder msg = new StringBuilder("Failed to download:\n");
 			for (Downloadable entry : queue.getFailures()) {
-				msg.append("   " + entry.getFilename() + "\n");
+				msg.append("   ").append(entry.getFilename()).append("\n");
 			}
 			JOptionPane.showMessageDialog(this, msg.toString(),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
 			System.exit(-2);
@@ -228,16 +229,14 @@ public class BootstrapForm extends JWindow
 			lblStatus.setText("Finished!");
 			StringBuilder sbClassPath = new StringBuilder();
 			if (System.getProperty("os.name").startsWith("Mac")) {
-				sbClassPath.append(cpDelimiter() + ".");
+				sbClassPath.append(pathSeparator).append(".");
 			}
 			for (Library lib : distro.getLibraries()){
 				if (lib.getFilename().endsWith("jar")) {
-					sbClassPath.append(cpDelimiter() + (new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
+					sbClassPath.append(pathSeparator).append((new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
 				}
 			}
-			sbClassPath.append(cpDelimiter() + System.getProperty("java.home") + File.separator + "lib/jfxrt.jar" );
-			StringBuilder sbParams = new StringBuilder();
-			sbParams.append(distro.getParams());
+			sbClassPath.append(pathSeparator).append(System.getProperty("java.home")).append(File.separator).append("lib/jfxrt.jar");
 			try {
 				String javaBin = "java";
 				File binDir;
@@ -274,7 +273,7 @@ public class BootstrapForm extends JWindow
 				}
 
 				args.addAll(Arrays.asList(this.passthroughParams));
-				String[] params = args.toArray(new String[0]);
+				String[] params = args.toArray(new String[args.size()]);
 				if (!debug) {
 					Process p = Runtime.getRuntime().exec(params);
 					if (p != null) {
@@ -319,7 +318,4 @@ public class BootstrapForm extends JWindow
 		System.out.println(msg);
 	}
 
-	private String cpDelimiter() {
-		return File.pathSeparator;
-	}
 }

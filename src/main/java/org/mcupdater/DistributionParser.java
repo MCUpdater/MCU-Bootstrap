@@ -66,7 +66,7 @@ public class DistributionParser {
 
 	public static Distribution parseDocument(Document dom, String distName, String javaVersion, PlatformType pt) {
 		Element parent = dom.getDocumentElement();
-		Element docEle = null;
+		Element docEle;
 		if (parent.getNodeName().equals("Distributions")) {
 			NodeList distributions = parent.getElementsByTagName("Distribution");
 			for (int i = 0; i < distributions.getLength(); i++) {
@@ -125,7 +125,7 @@ public class DistributionParser {
 		boolean validOnPlatform = false;
 		NodeList platforms = el.getElementsByTagName("Platform");
 		for (int i = 0; i < platforms.getLength(); i++){
-			if (((Element)platforms.item(i)).getTextContent().equals(pt.toString())) {
+			if (platforms.item(i).getTextContent().equals(pt.toString())) {
 				validOnPlatform = true;
 				break;
 			}
@@ -137,7 +137,6 @@ public class DistributionParser {
 		String filename = getTextValue(el, "Filename");
 		long size = Long.parseLong(getTextValue(el, "Size"));
 		String md5 = getTextValue(el, "MD5");
-		PlatformType platform = pt;
 		List<URL> downloadURLs = new ArrayList<URL>();
 		NodeList nl = el.getElementsByTagName("DownloadURL");
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -153,7 +152,7 @@ public class DistributionParser {
 				e.printStackTrace();
 			}
 		}
-		return new Library(name, filename, size, md5, platform.toString(), downloadURLs);
+		return new Library(name, filename, size, md5, pt.toString(), downloadURLs);
 	}
 
 	public static Distribution loadFromFile(File packFile, String distName, String javaVersion, PlatformType pt) {
