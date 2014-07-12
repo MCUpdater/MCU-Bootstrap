@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:Distributions xmlns:tns="http://www.mcupdater.com/Distribution" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com/Distribution Distribution.xsd ">
-  <tns:Distribution name="MCUDev-2.6.34">
-    <tns:ReleaseType>Develop</tns:ReleaseType>
+  <tns:Distribution name="Develop">
+    <tns:FriendlyName>"MCUDev-2.6.34"</tns:FriendlyName>
     <tns:JavaVersion>1.6</tns:JavaVersion>
     <tns:Class>org.smbarbour.mcu.Main</tns:Class>
     <tns:Params></tns:Params>
