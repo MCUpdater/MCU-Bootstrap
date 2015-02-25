@@ -29,6 +29,8 @@ public class BootstrapForm extends JWindow
 	private static final ResourceBundle config = ResourceBundle.getBundle("config"); //$NON-NLS-1$
 	
 	private static final long serialVersionUID = 1L;
+	private static String bootstrapUrl;
+	private static String distribution;
 	private final JProgressBar progressBar;
 	private final JLabel lblStatus;
 	private Distribution distro;
@@ -66,6 +68,8 @@ public class BootstrapForm extends JWindow
 			}
 			return;
 		}
+		bootstrapUrl = bootstrapSpec.value(options);
+		distribution = distSpec.value(options);
 
 		String customPath = options.valueOf(rootSpec);
 		if(System.getProperty("os.name").startsWith("Windows"))
@@ -131,7 +135,7 @@ public class BootstrapForm extends JWindow
 		System.out.println("System.getProperty('java.vendor') == '" + System.getProperty("java.vendor") + "'");
 		System.out.println("System.getProperty('sun.arch.data.model') == '" + System.getProperty("sun.arch.data.model") + "'");
 // ***
-		distro = DistributionParser.loadFromURL(config.getString("bootstrapURL"), config.getString("distribution"), System.getProperty("java.version").substring(0,3), thisPlatform);
+		distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, System.getProperty("java.version").substring(0,3), thisPlatform);
 		if (distro == null) {
 			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
