@@ -137,7 +137,7 @@ public class BootstrapForm extends JWindow
 // ***
 		distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, System.getProperty("java.version").substring(0,3), thisPlatform);
 		if (distro == null) {
-			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap. Make sure you are connected to the internet!",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		lblStatus.setText("Downloading " + distro.getFriendlyName());
