@@ -110,7 +110,7 @@ public class BootstrapForm extends JWindow
 					frame = new BootstrapForm();
 					List<String> passthrough = new ArrayList<String>();
 					passthrough.addAll(options.valuesOf(nonOpts));
-					passthrough.addAll(Arrays.asList(config.getString("passthroughArgs")));
+					passthrough.addAll(Arrays.asList(config.getString("passthroughArgs").split(" ")));
 					frame.setPassthroughParams(passthrough.toArray(new String[passthrough.size()]));
 					frame.setLocationRelativeTo( null );
 					frame.setVisible(true);
