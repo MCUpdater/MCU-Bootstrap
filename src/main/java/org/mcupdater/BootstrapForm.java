@@ -1,6 +1,7 @@
 package org.mcupdater;
 
 import joptsimple.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.mcupdater.downloadlib.DownloadQueue;
 import org.mcupdater.downloadlib.Downloadable;
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,6 +33,7 @@ public class BootstrapForm extends JWindow
 	private static final long serialVersionUID = 1L;
 	private static String bootstrapUrl;
 	private static String distribution;
+	private static String localBootstrap;
 	private final JProgressBar progressBar;
 	private final JLabel lblStatus;
 	private Distribution distro;
@@ -45,11 +48,13 @@ public class BootstrapForm extends JWindow
 	 * Launch the application.
 	 */
 	public static void main(final String[] args) {
+		System.setProperty("java.net.preferIPv4Stack", "true");
 		OptionParser optParser = new OptionParser();
 		optParser.allowsUnrecognizedOptions();
 		optParser.accepts("help", "Show help").forHelp();
 		optParser.formatHelpWith(new BuiltinHelpFormatter(160,3));
 		ArgumentAcceptingOptionSpec<String> bootstrapSpec = optParser.accepts("bootstrap", "Bootstrap URL").withRequiredArg().ofType(String.class).defaultsTo(config.getString("bootstrapURL"));
+		ArgumentAcceptingOptionSpec<String> localBootstrapSpec = optParser.accepts("bootstrapfile", "Bootstrap from local XML").withRequiredArg().ofType(String.class).defaultsTo("");
 		ArgumentAcceptingOptionSpec<String> distSpec = optParser.accepts("distribution", "MCUpdater distribution").withRequiredArg().ofType(String.class).defaultsTo(config.getString("distribution"));
 		ArgumentAcceptingOptionSpec<String> defaultpackSpec = optParser.accepts("defaultpack", "Default pack URL").withRequiredArg().ofType(String.class).defaultsTo(config.getString("defaultPack"));
 		ArgumentAcceptingOptionSpec<String> rootSpec = optParser.accepts("MCURoot", "Custom folder for MCUpdater").withRequiredArg().ofType(String.class).defaultsTo(config.getString("customPath"));
@@ -69,6 +74,7 @@ public class BootstrapForm extends JWindow
 			return;
 		}
 		bootstrapUrl = bootstrapSpec.value(options);
+		localBootstrap = localBootstrapSpec.value(options);
 		distribution = distSpec.value(options);
 
 		String customPath = options.valueOf(rootSpec);
@@ -135,7 +141,21 @@ public class BootstrapForm extends JWindow
 		System.out.println("System.getProperty('java.vendor') == '" + System.getProperty("java.vendor") + "'");
 		System.out.println("System.getProperty('sun.arch.data.model') == '" + System.getProperty("sun.arch.data.model") + "'");
 // ***
-		distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, System.getProperty("java.version").substring(0,3), thisPlatform);
+		if (localBootstrap.isEmpty()) {
+			distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
+			if (distro != null) {
+				try {
+					FileUtils.copyURLToFile(new URL(bootstrapUrl), new File(basePath, "Bootstrap-cache.xml"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.print("Warning! No distribution was found via URL. Attempting to use cache.");
+				distro = DistributionParser.loadFromFile(new File(basePath, "Bootstrap-cache.xml"), distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
+			}
+		} else {
+			distro = DistributionParser.loadFromFile(new File(localBootstrap), distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
+		}
 		if (distro == null) {
 			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap. Make sure you are connected to the internet!",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);

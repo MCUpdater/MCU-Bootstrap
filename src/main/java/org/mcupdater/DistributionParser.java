@@ -1,13 +1,10 @@
 package org.mcupdater;
 
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -16,7 +13,7 @@ import java.util.List;
 
 public class DistributionParser {
 
-	private static final String VERSION = "1.0";
+	private static final String VERSION = "1.3";
 
 	public static Document readXmlFromFile(File packFile) throws Exception
 	{
@@ -25,25 +22,19 @@ public class DistributionParser {
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			return db.parse(packFile);
-		}catch(ParserConfigurationException pce) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "Parser error", pce);
-		}catch(SAXException se) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "Parser error", se);
-		}catch(IOException ioe) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "I/O error", ioe);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 	
 	public static Document readXmlFromUrl(String serverUrl) throws Exception
 	{
-		//MCUpdater.apiLogger.fine("readXMLFromUrl(" + serverUrl + ")");
 		final URL server;
 		try {
 			server = new URL(serverUrl);
 		} catch( MalformedURLException e ) {
 			e.printStackTrace();
-			//MCUpdater.apiLogger.log(Level.WARNING, "Malformed URL", e);
 			return null;
 		}
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -54,12 +45,8 @@ public class DistributionParser {
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			return db.parse(serverConn.getInputStream());
-		}catch(ParserConfigurationException pce) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "Parser error", pce);
-		}catch(SAXException se) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "Parser error", se);
-		}catch(IOException ioe) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "I/O error", ioe);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -68,6 +55,7 @@ public class DistributionParser {
 		Element parent = dom.getDocumentElement();
 		Element docEle;
 		if (parent.getNodeName().equals("Distributions")) {
+			System.out.println("Iterating defined distributions:");
 			NodeList distributions = parent.getElementsByTagName("Distribution");
 			for (int i = 0; i < distributions.getLength(); i++) {
 				docEle = (Element)distributions.item(i);
@@ -144,11 +132,7 @@ public class DistributionParser {
 			try {
 				URL dlURL = new URL(elURL.getTextContent());
 				downloadURLs.add(dlURL);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (DOMException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -159,10 +143,9 @@ public class DistributionParser {
 		try {
 			return parseDocument(readXmlFromFile(packFile), distName, javaVersion, pt);
 		} catch (Exception e) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "General error", e);
+			e.printStackTrace();
 			return null;
 		}
-		//return modList;
 	}
 	
 	public static Distribution loadFromURL(String serverUrl, String distName, String javaVersion, PlatformType pt)
@@ -170,11 +153,9 @@ public class DistributionParser {
 		try {
 			return parseDocument(readXmlFromUrl(serverUrl), distName, javaVersion, pt);
 		} catch (Exception e) {
-			//MCUpdater.apiLogger.log(Level.SEVERE, "General error", e);
 			e.printStackTrace();
 			return null;
 		}
-		//return modList;
 	}
 
 }
