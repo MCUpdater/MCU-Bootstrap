@@ -48,6 +48,7 @@ public class BootstrapForm extends JWindow
 	 * Launch the application.
 	 */
 	public static void main(final String[] args) {
+		System.out.println("MCUpdater Bootstrap 1.3");
 		System.setProperty("java.net.preferIPv4Stack", "true");
 		OptionParser optParser = new OptionParser();
 		optParser.allowsUnrecognizedOptions();
