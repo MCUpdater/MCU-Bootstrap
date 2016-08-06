@@ -1,10 +1,13 @@
 package org.mcupdater;
 
 import joptsimple.*;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.mcupdater.downloadlib.DownloadQueue;
 import org.mcupdater.downloadlib.Downloadable;
+import org.mcupdater.downloadlib.SSLExpansion;
 import org.mcupdater.downloadlib.TrackerListener;
 
 import javax.swing.*;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static java.io.File.pathSeparator;
 
@@ -142,6 +146,19 @@ public class BootstrapForm extends JWindow
 		System.out.println("System.getProperty('java.vendor') == '" + System.getProperty("java.vendor") + "'");
 		System.out.println("System.getProperty('sun.arch.data.model') == '" + System.getProperty("sun.arch.data.model") + "'");
 // ***
+		SSLExpansion ssle = SSLExpansion.getInstance();
+		try {
+			List<String> resources = IOUtils.readLines(BootstrapForm.class.getResourceAsStream("/org/mcupdater/certs/certlist.txt"), Charsets.UTF_8);
+			for (String rsrc : resources) {
+				if (rsrc.endsWith(".pem")) {
+					ssle.addCertificateFromStream(BootstrapForm.class.getResourceAsStream("/org/mcupdater/certs/" + rsrc), rsrc.substring(0, rsrc.length() - 4));
+					System.out.println("Registered root certificate: " + rsrc.substring(0, rsrc.length() - 4));
+				}
+			}
+			ssle.updateSSLContext();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (localBootstrap.isEmpty()) {
 			distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
 			if (distro != null) {
