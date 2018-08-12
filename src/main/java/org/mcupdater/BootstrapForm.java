@@ -160,7 +160,7 @@ public class BootstrapForm extends JWindow
 			e.printStackTrace();
 		}
 		if (localBootstrap.isEmpty()) {
-			distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
+			distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, getJavaVersionString(), thisPlatform);
 			if (distro != null) {
 				try {
 					FileUtils.copyURLToFile(new URL(bootstrapUrl), new File(basePath, "Bootstrap-cache.xml"));
@@ -169,13 +169,13 @@ public class BootstrapForm extends JWindow
 				}
 			} else {
 				System.out.print("Warning! No distribution was found via URL. Attempting to use cache.");
-				distro = DistributionParser.loadFromFile(new File(basePath, "Bootstrap-cache.xml"), distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
+				distro = DistributionParser.loadFromFile(new File(basePath, "Bootstrap-cache.xml"), distribution, getJavaVersionString(), thisPlatform);
 			}
 		} else {
-			distro = DistributionParser.loadFromFile(new File(localBootstrap), distribution, System.getProperty("java.version").substring(0, 3), thisPlatform);
+			distro = DistributionParser.loadFromFile(new File(localBootstrap), distribution, getJavaVersionString(), thisPlatform);
 		}
 		if (distro == null) {
-			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + System.getProperty("java.version").substring(0,3),"MCU-Bootstrap. Make sure you are connected to the internet!",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + getJavaVersionString(),"MCU-Bootstrap. Make sure you are connected to the internet!",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		lblStatus.setText("Downloading " + distro.getFriendlyName());
@@ -188,6 +188,12 @@ public class BootstrapForm extends JWindow
 		queue.processQueue(new ThreadPoolExecutor(0, 1, 500, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));		
 	}
 
+	private String getJavaVersionString() {
+		String fullVersion = System.getProperty("java.version");
+		int pos = fullVersion.indexOf('.');
+		pos = fullVersion.indexOf('.', pos+1);
+		return fullVersion.substring(0, pos);
+	}
 	/**
 	 * Create the frame.
 	 */
