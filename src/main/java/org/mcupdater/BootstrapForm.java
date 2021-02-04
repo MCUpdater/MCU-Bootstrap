@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.mcupdater.downloadlib.DownloadQueue;
 import org.mcupdater.downloadlib.Downloadable;
+import org.mcupdater.downloadlib.TaskableExecutor;
 import org.mcupdater.downloadlib.SSLExpansion;
 import org.mcupdater.downloadlib.TrackerListener;
 
@@ -185,7 +186,13 @@ public class BootstrapForm extends JWindow
 			dl.add(dlEntry);
 		}
 		DownloadQueue queue = new DownloadQueue("Bootstrap", "Bootstrap", this, dl, new File(basePath,"lib"), null);
-		queue.processQueue(new ThreadPoolExecutor(0, 1, 500, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));		
+		queue.processQueue(new TaskableExecutor(1, new Runnable() {
+
+				@Override
+				public void run() {
+					System.out.println("Bootstrap finished.");
+				}
+			}));
 	}
 
 	private String getJavaVersionString() {
