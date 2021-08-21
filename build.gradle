@@ -1,0 +1,32 @@
+import org.apache.tools.ant.filters.*
+
+plugins {
+    id 'workspace.java-application-conventions'
+}
+
+version = bootstrapVersion
+
+dependencies {
+    implementation project(':MCU-DownloadLib')
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/config.properties'
+        filter(ReplaceTokens, tokens: [bootstrapURL: bootstrapURL, distribution: distribution, defaultPack: defaultPack])
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude '**/config.properties'
+    }
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest {
+        attributes "Main-Class": 'org.mcupdater.BootstrapForm'
+    }
+}
+
+jar.setDependsOn([':MCU-DownloadLib:jar'])
