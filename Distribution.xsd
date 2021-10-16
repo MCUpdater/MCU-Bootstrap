@@ -12,21 +12,54 @@
 	<complexType name="DistributionType">
 		<sequence>
 			<element type="string" name="FriendlyName" maxOccurs="1" minOccurs="1"/>
-			<element type="string" name="JavaVersion" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="JavaVersion" maxOccurs="unbounded" minOccurs="0"/>
 			<element type="string" name="Class" maxOccurs="1" minOccurs="1"/>
 			<element type="string" name="Params" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Message" maxOccurs="1" minOccurs="0"/>
 			<element type="tns:LibraryType" name="Library" minOccurs="1" maxOccurs="unbounded"/>
+			<element type="tns:ExtractType" name="Extract" minOccurs="0" maxOccurs="unbounded"/>
+			<element type="tns:RuntimeType" name="Runtime" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 		<attribute type="string" name="name"/>
 	</complexType>
-	
+
+	<complexType name="RuntimeType">
+		<sequence>
+			<element type="string" name="Filename" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Version" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Executable" maxOccurs="1" minOccurs="1"/>
+			<element type="long" name="Size" maxOccurs="1" minOccurs="1"/>
+			<element type="tns:HashType" name="Hash" maxOccurs="1" minOccurs="0"/>
+			<element type="tns:PlatformType" name="Platform" maxOccurs="unbounded" minOccurs="1"/>
+			<element type="tns:PriorityURL" name="DownloadURL" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute type="string" name="name"/>
+		<attribute type="boolean" name="primary" use="optional" default="false"/>
+	</complexType>
+
+	<complexType name="ExtractType">
+		<sequence>
+			<element type="string" name="Filename" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="Path" maxOccurs="1" minOccurs="1"/>
+			<element type="long" name="Size" maxOccurs="1" minOccurs="1"/>
+			<element type="tns:HashType" name="Hash" maxOccurs="1" minOccurs="0"/>
+			<element type="tns:PlatformType" name="Platform" maxOccurs="unbounded" minOccurs="1"/>
+			<element type="string" name="IncludePath" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="ModuleName" maxOccurs="unbounded" minOccurs="0"/>
+			<element type="tns:PriorityURL" name="DownloadURL" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute type="string" name="name"/>
+	</complexType>
+
 	<complexType name="LibraryType">
 		<sequence>
 			<element type="string" name="Filename" maxOccurs="1" minOccurs="1"/>
 			<element type="long" name="Size" maxOccurs="1" minOccurs="1"/>
-			<element type="string" name="MD5" maxOccurs="1" minOccurs="1"/>
+			<element type="string" name="MD5" maxOccurs="1" minOccurs="0"/>
+			<element type="tns:HashType" name="Hash" maxOccurs="1" minOccurs="0"/>
 			<element type="tns:PlatformType" name="Platform" maxOccurs="unbounded" minOccurs="1" />
-			<element type="anyURI" name="DownloadURL" maxOccurs="unbounded" minOccurs="1"/>
+			<element type="string" name="ModuleName" maxOccurs="unbounded" minOccurs="0"/>
+			<element type="tns:PriorityURL" name="DownloadURL" minOccurs="1" maxOccurs="unbounded"/>
 		</sequence>
 		<attribute type="string" name="name"/>
 	</complexType>
@@ -40,4 +73,29 @@
 			<enumeration value="LINUX64"/>
 		</restriction>
 	</simpleType>
+
+	<complexType name="HashType">
+		<simpleContent>
+			<extension base="string">
+				<attribute type="tns:HashEnum" name="type"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+
+	<simpleType name="HashEnum">
+		<restriction base="string">
+			<enumeration value="MD5"/>
+			<enumeration value="SHA1"/>
+			<enumeration value="SHA256"/>
+			<enumeration value="SHA512"/>
+		</restriction>
+	</simpleType>
+
+	<complexType name="PriorityURL">
+		<simpleContent>
+			<extension base="anyURI">
+				<attribute type="integer" name="priority" />
+			</extension>
+		</simpleContent>
+	</complexType>
 </schema>

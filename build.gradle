@@ -5,9 +5,11 @@ plugins {
 }
 
 version = bootstrapVersion
+sourceCompatibility = 16
 
 dependencies {
     implementation project(':MCU-DownloadLib')
+    implementation 'org.apache.commons:commons-compress:1.21'
 }
 
 processResources {
@@ -27,6 +29,10 @@ jar {
     manifest {
         attributes "Main-Class": 'org.mcupdater.BootstrapForm'
     }
+}
+
+application {
+    mainClass = 'org.mcupdater.BootstrapForm'
 }
 
 jar.setDependsOn([':MCU-DownloadLib:jar'])

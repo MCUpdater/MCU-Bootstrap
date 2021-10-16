@@ -1,6 +1,11 @@
 package org.mcupdater;
 
 import joptsimple.*;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -15,32 +20,33 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.io.File.pathSeparator;
+import static java.io.File.separator;
 
-public class BootstrapForm extends JWindow
-	implements TrackerListener
+public class BootstrapForm extends JWindow implements TrackerListener
 {
 	private static final ResourceBundle config = ResourceBundle.getBundle("config"); //$NON-NLS-1$
 	
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private static String bootstrapUrl;
 	private static String distribution;
 	private static String localBootstrap;
 	private final JProgressBar progressBar;
 	private final JLabel lblStatus;
+	private final Logger logger;
 	private Distribution distro;
+	private List<Distribution> distributions;
 	private static File basePath;// = new File("/home/sbarbour/Bootstrap-test");
 	private static PlatformType thisPlatform;
 	private String[] passthroughParams;
@@ -52,7 +58,7 @@ public class BootstrapForm extends JWindow
 	 * Launch the application.
 	 */
 	public static void main(final String[] args) {
-		System.out.println("MCUpdater Bootstrap 1.3");
+		System.out.println("MCUpdater Bootstrap");
 		System.setProperty("java.net.preferIPv4Stack", "true");
 		OptionParser optParser = new OptionParser();
 		optParser.allowsUnrecognizedOptions();
@@ -83,52 +89,45 @@ public class BootstrapForm extends JWindow
 		distribution = distSpec.value(options);
 
 		String customPath = options.valueOf(rootSpec);
-		if(System.getProperty("os.name").startsWith("Windows"))
-		{
+		if(System.getProperty("os.name").startsWith("Windows")) {
 			basePath = new File(new File(System.getenv("APPDATA")),".MCUpdater");
 			thisPlatform = PlatformType.valueOf("WINDOWS" + System.getProperty("sun.arch.data.model"));
-		} else if(System.getProperty("os.name").startsWith("Mac"))
-		{
+		} else if(System.getProperty("os.name").startsWith("Mac")) {
 			basePath = new File(new File(new File(new File(System.getProperty("user.home")),"Library"),"Application Support"),"MCUpdater");
 			thisPlatform = PlatformType.valueOf("OSX64");
-		}
-		else
-		{
+		} else {
 			basePath = new File(new File(System.getProperty("user.home")),".MCUpdater");
 			thisPlatform = PlatformType.valueOf("LINUX" + System.getProperty("sun.arch.data.model"));
 		}
 		if (!customPath.isEmpty()) {
 			basePath = new File(customPath);
 		}
-		final Map<String, Object> opts = new HashMap<String, Object>();
+		final Map<String, Object> opts = new HashMap<>();
 		opts.put("bootstrapURL", options.valueOf(bootstrapSpec));
 		opts.put("distribution", options.valueOf(distSpec));
 
-		EventQueue.invokeLater(new Runnable() {
-
-			public void run() {
-				try {
-					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-						//System.out.println(info.getName() + " : " + info.getClassName());
-						if ("Nimbus".equals(info.getName())) {
-							UIManager.setLookAndFeel(info.getClassName());
-							break;
-						}
+		EventQueue.invokeLater(() -> {
+			try {
+				for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+					//System.out.println(info.getName() + " : " + info.getClassName());
+					if ("Nimbus".equals(info.getName())) {
+						UIManager.setLookAndFeel(info.getClassName());
+						break;
 					}
-					if (UIManager.getLookAndFeel().getName().equals("Metal")) {
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					}
-					frame = new BootstrapForm();
-					List<String> passthrough = new ArrayList<String>();
-					passthrough.addAll(options.valuesOf(nonOpts));
-					passthrough.addAll(Arrays.asList(config.getString("passthroughArgs").split(" ")));
-					frame.setPassthroughParams(passthrough.toArray(new String[passthrough.size()]));
-					frame.setLocationRelativeTo( null );
-					frame.setVisible(true);
-					frame.doWork(opts);
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
+				if (UIManager.getLookAndFeel().getName().equals("Metal")) {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				}
+				frame = new BootstrapForm();
+				List<String> passthrough = new ArrayList<String>();
+				passthrough.addAll(options.valuesOf(nonOpts));
+				passthrough.addAll(Arrays.asList(config.getString("passthroughArgs").split(" ")));
+				frame.setPassthroughParams(passthrough.toArray(new String[passthrough.size()]));
+				frame.setLocationRelativeTo( null );
+				frame.setVisible(true);
+				frame.doWork(opts);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -151,8 +150,9 @@ public class BootstrapForm extends JWindow
 			List<String> resources = IOUtils.readLines(BootstrapForm.class.getResourceAsStream("/org/mcupdater/certs/certlist.txt"), Charsets.UTF_8);
 			for (String rsrc : resources) {
 				if (rsrc.endsWith(".pem")) {
-					ssle.addCertificateFromStream(BootstrapForm.class.getResourceAsStream("/org/mcupdater/certs/" + rsrc), rsrc.substring(0, rsrc.length() - 4));
-					System.out.println("Registered root certificate: " + rsrc.substring(0, rsrc.length() - 4));
+					String certName = rsrc.substring(0, rsrc.length() - 4);
+					ssle.addCertificateFromStream(BootstrapForm.class.getResourceAsStream("/org/mcupdater/certs/" + rsrc), certName);
+					System.out.println("Registered root certificate: " + certName);
 				}
 			}
 			ssle.updateSSLContext();
@@ -160,8 +160,9 @@ public class BootstrapForm extends JWindow
 			e.printStackTrace();
 		}
 		if (localBootstrap.isEmpty()) {
-			distro = DistributionParser.loadFromURL(bootstrapUrl, distribution, getJavaVersionString(), thisPlatform);
-			if (distro != null) {
+			System.out.println("Attempting from: " + bootstrapUrl);
+			distributions = DistributionParser.loadFromURL(bootstrapUrl);
+			if (distributions.size() != 0) {
 				try {
 					FileUtils.copyURLToFile(new URL(bootstrapUrl), new File(basePath, "Bootstrap-cache.xml"));
 				} catch (IOException e) {
@@ -169,23 +170,97 @@ public class BootstrapForm extends JWindow
 				}
 			} else {
 				System.out.print("Warning! No distribution was found via URL. Attempting to use cache.");
-				distro = DistributionParser.loadFromFile(new File(basePath, "Bootstrap-cache.xml"), distribution, getJavaVersionString(), thisPlatform);
+				distributions = DistributionParser.loadFromFile(new File(basePath, "Bootstrap-cache.xml"));
 			}
 		} else {
-			distro = DistributionParser.loadFromFile(new File(localBootstrap), distribution, getJavaVersionString(), thisPlatform);
+			distributions = DistributionParser.loadFromFile(new File(localBootstrap));
 		}
-		if (distro == null) {
-			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\" and Java " + getJavaVersionString(),"MCU-Bootstrap. Make sure you are connected to the internet!",JOptionPane.ERROR_MESSAGE);
+		System.out.printf("Total distros: %d%n",distributions.size());
+		List<Distribution> matchingDistros = distributions.stream().filter(entry -> entry.getName().equals(distribution)).toList();
+		System.out.printf("Matching distros: %d%n",matchingDistros.size());
+		if (matchingDistros.size() == 0) {
+			JOptionPane.showMessageDialog(this, "No configuration found that matches distribution \"" + opts.get("distribution") + "\"!  Make sure you are connected to the internet, otherwise please report this issue via Discord.","MCU-Bootstrap",JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
+		} else if (matchingDistros.size() > 1) {
+			JOptionPane.showMessageDialog(this, "Multiple configurations found that match distribution \"" + distribution + "\"!  Please report this issue via Discord.", "MCU-Bootstrap", JOptionPane.WARNING_MESSAGE);
 		}
+		distro = matchingDistros.get(0);
 		lblStatus.setText("Downloading " + distro.getFriendlyName());
-		Collection<Downloadable> dl = new ArrayList<Downloadable>();
-		for (Library l : distro.getLibraries()) {
-			Downloadable dlEntry = new Downloadable(l.getName(),l.getFilename(),l.getMd5(),l.getSize(),l.getDownloadURLs());
+		Collection<Downloadable> dl = new ArrayList<>();
+		for (Library library : distro.getRelevantLibraries(thisPlatform)) {
+			Hash bestHash = library.getHashes().stream().max(Comparator.comparing(Hash::getType)).orElse(new Hash(HashEnum.MD5,""));
+			Downloadable dlEntry = new Downloadable(library.getName(),("lib" + separator + library.getFilename()), Downloadable.HashAlgorithm.valueOf(bestHash.getType().name()),bestHash.getValue(),library.getSize(),library.getURLs());
 			dl.add(dlEntry);
 		}
-		DownloadQueue queue = new DownloadQueue("Bootstrap", "Bootstrap", this, dl, new File(basePath,"lib"), null);
-		queue.processQueue(new ThreadPoolExecutor(0, 1, 500, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));		
+		for (DistributionRuntime runtime : distro.getRelevantRuntimes(thisPlatform)) {
+			Hash bestHash = runtime.getHashes().stream().max(Comparator.comparing(Hash::getType)).orElse(new Hash(HashEnum.MD5,""));
+			Downloadable dlEntry = new Downloadable(runtime.getName(),("runtime" + separator + runtime.getFilename()), Downloadable.HashAlgorithm.valueOf(bestHash.getType().name()),bestHash.getValue(),runtime.getSize(),runtime.getURLs());
+			dl.add(dlEntry);
+		}
+		for (Extract extract : distro.getRelevantExtracts(thisPlatform)) {
+			Hash bestHash = extract.getHashes().stream().max(Comparator.comparing(Hash::getType)).orElse(new Hash(HashEnum.MD5,""));
+			Downloadable dlEntry = new Downloadable(extract.getName(),("extract" + separator + extract.getFilename()), Downloadable.HashAlgorithm.valueOf(bestHash.getType().name()),bestHash.getValue(),extract.getSize(),extract.getURLs());
+			dl.add(dlEntry);
+		}
+		DownloadQueue queue = new DownloadQueue("Bootstrap", "Bootstrap", this, dl, basePath, null, logger);
+		queue.processQueue(4, () -> {
+			Path extractPath = basePath.toPath().resolve("extract");
+			for (Extract extract : distro.getRelevantExtracts(thisPlatform)) {
+				File currentFile = extractPath.resolve(extract.getFilename()).toFile();
+				try {
+					ArchiveInputStream extractStream;
+					if (currentFile.getAbsolutePath().endsWith(".tar.gz") || currentFile.getAbsolutePath().endsWith(".tgz")) {
+						extractStream = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(currentFile))));
+						extractFromStream(basePath.toPath().resolve(extract.getPath()), extractStream);
+					} else if (currentFile.getAbsolutePath().endsWith(".zip")) {
+						extractStream = new ZipArchiveInputStream(new BufferedInputStream(new FileInputStream(currentFile)));
+						extractFromStream(basePath.toPath().resolve(extract.getPath()), extractStream);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			Path runtimePath = basePath.toPath().resolve("runtime");
+			for (DistributionRuntime runtime : distro.getRelevantRuntimes(thisPlatform)) {
+				File currentFile = runtimePath.resolve(runtime.getFilename()).toFile();
+				try {
+					ArchiveInputStream extractStream;
+					if (currentFile.getAbsolutePath().endsWith(".tar.gz") || currentFile.getAbsolutePath().endsWith(".tgz")) {
+						extractStream = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(currentFile))));
+						extractFromStream(runtimePath.resolve(runtime.getName() + '-' + runtime.getVersion()), extractStream);
+					} else if (currentFile.getAbsolutePath().endsWith(".zip")) {
+						extractStream = new ZipArchiveInputStream(new BufferedInputStream(new FileInputStream(currentFile)));
+						extractFromStream(runtimePath.resolve(runtime.getName() + '-' + runtime.getVersion()), extractStream);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void extractFromStream(Path path, ArchiveInputStream extractStream) throws IOException {
+		ArchiveEntry entry;
+		while ((entry = extractStream.getNextEntry()) != null) {
+			if (!extractStream.canReadEntryData(entry)) {
+				System.err.println("Unable to read entry: " + entry);
+				continue;
+			}
+			File destFile = path.resolve(entry.getName()).toFile();
+			if (entry.isDirectory()) {
+				if (!destFile.isDirectory() && !destFile.mkdirs()) {
+					throw new IOException("Failed to create directory " + destFile);
+				}
+			} else {
+				File parent = destFile.getParentFile();
+				if (!parent.isDirectory() && !parent.mkdirs()) {
+					throw new IOException("Failed to create directory " + parent);
+				}
+				try (OutputStream out = Files.newOutputStream(destFile.toPath())) {
+					IOUtils.copy(extractStream, out);
+				}
+			}
+		}
 	}
 
 	private String getJavaVersionString() {
@@ -198,6 +273,12 @@ public class BootstrapForm extends JWindow
 	 * Create the frame.
 	 */
 	public BootstrapForm() {
+		// Establish logger
+		logger = Logger.getLogger("MCU-Bootstrap");
+		logger.setLevel(Level.ALL);
+		ConsoleHandler handler = new ConsoleHandler();
+		logger.addHandler(handler);
+		///
 		// setBounds(100, 100, 450, 300);
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -237,17 +318,17 @@ public class BootstrapForm extends JWindow
 				Graphics2D g2d = (Graphics2D)image.getGraphics();
 				g2d.drawImage(source, 0, 0, null);
 				g2d.dispose();
-		        int width = getWidth();  
-		        int height = getHeight();  
-		        int imageW = image.getWidth(this);  
-		        int imageH = image.getHeight(this);  
-		   
-		        // Tile the image to fill our area.  
-		        for (int x = 0; x < width; x += imageW) {  
-		            for (int y = 0; y < height; y += imageH) {  
-		                g.drawImage(image, x, y, this);  
-		            }  
-		        }  
+				int width = getWidth();
+				int height = getHeight();
+				int imageW = image.getWidth(this);
+				int imageH = image.getHeight(this);
+
+				// Tile the image to fill our area.
+				for (int x = 0; x < width; x += imageW) {
+					for (int y = 0; y < height; y += imageH) {
+						g.drawImage(image, x, y, this);
+					}
+				}
 			}
 			
 			
@@ -276,48 +357,82 @@ public class BootstrapForm extends JWindow
 		} else {
 			lblStatus.setText("Finished!");
 			StringBuilder sbClassPath = new StringBuilder();
+			StringBuilder sbModulePath = new StringBuilder();
+			StringBuilder sbModules = new StringBuilder();
 			if (System.getProperty("os.name").startsWith("Mac")) {
 				sbClassPath.append(pathSeparator).append(".");
 			}
-			for (Library lib : distro.getLibraries()){
+			for (Library lib : distro.getRelevantLibraries(thisPlatform)) {
 				if (lib.getFilename().endsWith("jar")) {
-					sbClassPath.append(pathSeparator).append((new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
+					if (lib.hasModules()) {
+						sbModulePath.append(pathSeparator).append((new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
+						for (String module : lib.getModuleNames()) {
+							sbModules.append(",").append(module);
+						}
+					} else {
+						sbClassPath.append(pathSeparator).append((new File(new File(basePath, "lib"), lib.getFilename())).getAbsolutePath());
+					}
 				}
 			}
-			sbClassPath.append(pathSeparator).append(System.getProperty("java.home")).append(File.separator).append("lib/jfxrt.jar");
-			try {
-				String javaBin = "java";
+			for (Extract extract : distro.getRelevantExtracts(thisPlatform)) {
+				if (extract.hasModules()) {
+					sbModulePath.append(pathSeparator).append((new File(basePath, extract.getIncludePath())).getAbsolutePath());
+					for (String module : extract.getModuleNames()) {
+						sbModules.append(",").append(module);
+					}
+				} else {
+					sbClassPath.append(pathSeparator).append((new File(new File(basePath, "extract"), extract.getIncludePath())).getAbsolutePath()).append(separator).append("*");
+				}
+			}
+			DistributionRuntime runtime = distro.getPrimaryRuntime(thisPlatform);
+			String javaBin;
+			if (runtime != null) {
+				javaBin = basePath.toPath().resolve("runtime").resolve(runtime.getName() + "-" + runtime.getVersion()).resolve(runtime.getExecutable()).toString();
+			} else {
+				javaBin = "java";
 				File binDir;
 				if (System.getProperty("os.name").startsWith("Mac")) {
 					binDir = new File(new File(System.getProperty("java.home")), "Commands");
 				} else {
 					binDir = new File(new File(System.getProperty("java.home")), "bin");
 				}
-				if( binDir.exists() ) {
+				if (binDir.exists()) {
 					javaBin = (new File(binDir, "java")).getAbsolutePath();
 				}
-				List<String> args = new ArrayList<String>();
+			}
+			try {
+
+				List<String> args = new ArrayList<>();
 				args.add(javaBin);
 				args.add("-Djavafx.verbose=true");
-				if (System.getProperty("os.name").toUpperCase().equals("MAC OS X")) {
+				if (System.getProperty("os.name").equalsIgnoreCase("Mac OS X")) {
 					//args.add("-XstartOnFirstThread");
 					args.add("-Xdock:name=" + distro.getFriendlyName());
 					args.add("-Xdock:icon=" + (new File(new File(basePath, "lib"), "mcu-icon.icns")).getAbsolutePath());
 				}
+				if (!sbModules.isEmpty()) {
+					args.add("--module-path");
+					args.add(sbModulePath.substring(1));
+					args.add("--add-modules");
+					args.add(sbModules.substring(1));
+				}
 				args.add("-cp");
-				args.add(sbClassPath.toString().substring(1));
+				args.add(sbClassPath.substring(1));
 				args.add(distro.getMainClass());
-				Map<String,String> fields = new HashMap<String,String>();
+				Map<String, String> fields = new HashMap<>();
 				StrSubstitutor fieldReplacer = new StrSubstitutor(fields);
 				fields.put("defaultPack", defaultPack);
 				fields.put("MCURoot", basePath.getAbsolutePath());
+				StringBuilder runtimeString = new StringBuilder();
+				distro.getRelevantRuntimes(thisPlatform).forEach(entry -> runtimeString.append(runtimeString.isEmpty() ? "" : ";").append(entry.getVersion()).append("#").append(basePath.toPath().resolve("runtime").resolve(String.format("%s-%s",entry.getName(), entry.getVersion())).resolve(entry.getExecutable()).toAbsolutePath()));
+				fields.put("runtimes", runtimeString.toString());
 				//if (distro.getParams() != null) { args.addAll(Arrays.asList(fieldReplacer.replace(distro.getParams()).split(" ")));}
 				if (distro.getParams() != null) {
 					String[] fieldArr = distro.getParams().split(" ");
 					for (int i = 0; i < fieldArr.length; i++) {
 						fieldArr[i] = fieldReplacer.replace(fieldArr[i]);
 					}
-					args.addAll(Arrays.asList(fieldArr));					
+					args.addAll(Arrays.asList(fieldArr));
 				}
 
 				args.addAll(Arrays.asList(this.passthroughParams));
@@ -347,9 +462,7 @@ public class BootstrapForm extends JWindow
 						System.exit(0);
 					}
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
+			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
 		}

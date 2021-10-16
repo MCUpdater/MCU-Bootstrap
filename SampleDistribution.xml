@@ -8,7 +8,7 @@
     <tns:Library>
       <tns:Filename>MCUpdater.jar</tns:Filename>
       <tns:Size>1375236</tns:Size>
-      <tns:MD5>66eae381c1a25651dadbef22a52c6b30</tns:MD5>
+      <tns:Hash type="MD5">66eae381c1a25651dadbef22a52c6b30</tns:Hash>
       <tns:Platform>WINDOWS32</tns:Platform>
       <tns:Platform>WINDOWS64</tns:Platform>
       <tns:Platform>OSX</tns:Platform>
