@@ -1,0 +1,18 @@
+{
+  "resources":{
+  "includes":[
+    {"pattern":"\\Qbg_main.png\\E"}, 
+    {"pattern":"\\Qmcu-logo-new.png\\E"}, 
+    {"pattern":"\\Qorg/mcupdater/certs/certlist.txt\\E"}, 
+    {"pattern":"\\Qorg/mcupdater/certs/dst_root_ca_x3.pem\\E"}, 
+    {"pattern":"\\Qorg/mcupdater/certs/startssl.pem\\E"}, 
+    {"pattern":"\\Qorg/mcupdater/downloadlib/version.properties\\E"}
+  ]},
+  "bundles":[
+    {"name":"com.sun.swing.internal.plaf.basic.resources.basic"}, 
+    {"name":"com.sun.swing.internal.plaf.metal.resources.metal"}, 
+    {"name":"com.sun.swing.internal.plaf.synth.resources.synth"}, 
+    {"name":"config"}, 
+    {"name":"sun.awt.resources.awt"}
+  ]
+}
