@@ -212,7 +212,6 @@ public class BootstrapForm extends JWindow implements TrackerListener
 					if (currentFile.getAbsolutePath().endsWith(".tar.gz") || currentFile.getAbsolutePath().endsWith(".tgz")) {
 						extractStream = new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(currentFile))));
 						extractFromStream(basePath.toPath().resolve(extract.getPath()), extractStream);
-//						basePath.toPath().resolve(extract.getPath()).
 					} else if (currentFile.getAbsolutePath().endsWith(".zip")) {
 						extractStream = new ZipArchiveInputStream(new BufferedInputStream(new FileInputStream(currentFile)));
 						extractFromStream(basePath.toPath().resolve(extract.getPath()), extractStream);
@@ -259,6 +258,7 @@ public class BootstrapForm extends JWindow implements TrackerListener
 				}
 				try (OutputStream out = Files.newOutputStream(destFile.toPath())) {
 					IOUtils.copy(extractStream, out);
+					destFile.setExecutable(true);
 				}
 			}
 		}
