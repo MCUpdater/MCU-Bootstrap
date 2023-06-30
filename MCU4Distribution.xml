@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tns:Distributions xmlns:tns="http://www.mcupdater.com/Distribution" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com/Distribution Distribution.xsd ">
+    <tns:Distribution name="JavaFX-Release">
+        <tns:FriendlyName>MCUpdater 4.0</tns:FriendlyName>
+        <tns:Class>org.mcupdater.gui.javafx.Main</tns:Class>
+        <tns:Params>--ServerPack ${defaultPack} --MCURoot ${MCURoot}</tns:Params>
+        <tns:Library>
+            <tns:Filename>MCUpdater.jar</tns:Filename>
+            <tns:Size>99974</tns:Size>
+            <tns:Hash type="SHA256">C44C73CD66EDBA78281CEA10F0D1F5D7BBB6A226C0EB12FA17BAA3F74EA96DF8</tns:Hash>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/release/GUI-JavaFX-4.0.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-API.jar</tns:Filename>
+            <tns:Size>242160</tns:Size>
+            <tns:Hash type="SHA256">E5305F868F2DC578DA74CA338F417B2F587DD8DFB180FF4EAD45A7D226DCABD5</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/release/MCU-API-4.0.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-PackBuilder.jar</tns:Filename>
+            <tns:Size>81922</tns:Size>
+            <tns:Hash type="SHA256">C36EAC10DF19E581FCF9BA5F3F6F64708C3A6B2B36B479C50C9E3675A5AFCA74</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/release/PackBuilder-4.0.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-Launcher.jar</tns:Filename>
+            <tns:Size>7404</tns:Size>
+            <tns:Hash type="MD5">cc65e54a4fdaebd7a0c1db8111874ad7</tns:Hash>
+            <tns:Platform>WINDOWS32</tns:Platform>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX32</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/MCU-Launcher.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-ForgeLoader.jar</tns:Filename>
+            <tns:Size>4707</tns:Size>
+            <tns:Hash type="MD5">3403c2a5509be5bc759d569e569353cf</tns:Hash>
+            <tns:Platform>WINDOWS32</tns:Platform>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX32</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/MCU-ForgeLoader.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-ForgeLoaderV2.jar</tns:Filename>
+            <tns:Size>4761</tns:Size>
+            <tns:Hash type="MD5">2962b88204bcfafaabf7104bab200b49</tns:Hash>
+            <tns:Platform>WINDOWS32</tns:Platform>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX32</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/MCU-ForgeLoaderV2.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-LegacyForgeLoader.jar</tns:Filename>
+            <tns:Size>4630</tns:Size>
+            <tns:Hash type="MD5">6c44c16914e7e2f68238809a01cb08f6</tns:Hash>
+            <tns:Platform>WINDOWS32</tns:Platform>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX32</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/MCU-LegacyForgeLoader.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>MCU-DownloadLib.jar</tns:Filename>
+            <tns:Size>25127</tns:Size>
+            <tns:Hash type="SHA256">DBEB3EFC99F635647D6401D7ADA308607017579F463C75C7B75102578CFD9FA6</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/MCU-DownloadLib-1.14.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>commons-codec-1.10.jar</tns:Filename>
+            <tns:Size>284184</tns:Size>
+            <tns:Hash type="SHA256">4241DFA94E711D435F29A4604A3E2DE5C4AA3C165E23BD066BE6FC1FC4309569</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/commons-codec-1.10.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>commons-compress-1.21.jar</tns:Filename>
+            <tns:Size>1018316</tns:Size>
+            <tns:Hash type="SHA256">6AECFD5459728A595601CFA07258D131972FFC39B492EB48BDD596577A2F244A</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/commons-compress-1.21.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>commons-io-2.4.jar</tns:Filename>
+            <tns:Size>185140</tns:Size>
+            <tns:Hash type="MD5">7f97854dc04c119d461fed14f5d8bb96</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/commons-io-2.4.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>commons-lang3-3.5.jar</tns:Filename>
+            <tns:Size>479881</tns:Size>
+            <tns:Hash type="SHA256">8AC96FC686512D777FCA85E144F196CD7CFE0C0AEC23127229497D1A38FF651C</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/commons-lang3-3.5.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>gson-2.8.0.jar</tns:Filename>
+            <tns:Size>231952</tns:Size>
+            <tns:Hash type="SHA256">C6221763BD79C4F1C3DC7F750B5F29A0BB38B367B81314C4F71896E340C40825</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/gson-2.8.0.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>jopt-simple-6.0-alpha-3.jar</tns:Filename>
+            <tns:Size>79368</tns:Size>
+            <tns:Hash type="SHA256">D440CEB839D6ADB5CFA81AA321813D60255E68A3E9CA564C91126599310ABDE5</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/jopt-simple-6.0-alpha-3.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>jsoup-1.14.2.jar</tns:Filename>
+            <tns:Size>413906</tns:Size>
+            <tns:Hash type="SHA256">A601BA7CE2E2C6E744D4EAC793A76707C0121576170EF717EF7A81F2343ADA1A</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/jsoup-1.14.2.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>mcu-icon.icns</tns:Filename>
+            <tns:Size>14052</tns:Size>
+            <tns:Hash type="MD5">60a77da15f513ef8b918b1f679f6b1ba</tns:Hash>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/mcu-icon.icns</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>guava-21.0.jar</tns:Filename>
+            <tns:Size>2521113</tns:Size>
+            <tns:Hash type="SHA256">972139718ABC8A4893FA78CBA8CF7B2C903F35C97AAF44FA3031B0669948B480</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/guava-21.0.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>log4j-api-2.0-rc2.jar</tns:Filename>
+            <tns:Size>118139</tns:Size>
+            <tns:Hash type="MD5">025e547dfbf1e91d2c01bdd08442d156</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/log4j-api-2.0-beta9.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>log4j-core-2.0-rc2.jar</tns:Filename>
+            <tns:Size>768972</tns:Size>
+            <tns:Hash type="MD5">de8d01cc15fd0c74fea8bbb668e289f5</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://files.mcupdater.com/lib/log4j-core-2.0-rc2.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>authlib-1.6.25.jar</tns:Filename>
+            <tns:Size>70197</tns:Size>
+            <tns:Hash type="MD5">335f5bae5e6163a62e0a2ccdce8303ac</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL>https://libraries.minecraft.net/com/mojang/authlib/1.6.25/authlib-1.6.25.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>xz-1.4.jar</tns:Filename>
+            <tns:Size>99234</tns:Size>
+            <tns:Hash type="MD5">a3d3a7f7fb8e9d05e8b64c3ccf672217</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL>http://search.maven.org/remotecontent?filepath=org/tukaani/xz/1.4/xz-1.4.jar</tns:DownloadURL>
+            <tns:DownloadURL>http://files.mcupdater.com/lib/xz-1.4.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Library>
+            <tns:Filename>tomlj-1.0.0.jar</tns:Filename>
+            <tns:Size>157156</tns:Size>
+            <tns:Hash type="MD5">462295849743168e3dc72e214c50cf64</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL>http://files.mcupdater.com/lib/tomlj-1.0.0.jar</tns:DownloadURL>
+        </tns:Library>
+        <tns:Extract name="JavaFX">
+            <tns:Filename>OpenJFX-17.zip</tns:Filename>
+            <tns:Path>JavaFX</tns:Path>
+            <tns:Size>42393853</tns:Size>
+            <tns:Hash type="SHA256">9138FAEFF07A81E2DD106BE77F6B827FAD7655CDE72C4AC44B7E85393F5821DA</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:IncludePath>JavaFX\javafx-sdk-17.0.0.1\lib\*</tns:IncludePath>
+            <tns:ModuleName>javafx.controls</tns:ModuleName>
+            <tns:ModuleName>javafx.fxml</tns:ModuleName>
+            <tns:ModuleName>javafx.web</tns:ModuleName>
+            <tns:DownloadURL priority="0">https://download2.gluonhq.com/openjfx/17.0.0.1/openjfx-17.0.0.1_windows-x64_bin-sdk.zip</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/17/openjfx-17.0.0.1_windows-x64_bin-sdk.zip</tns:DownloadURL>
+        </tns:Extract>
+        <tns:Extract name="JavaFX">
+            <tns:Filename>OpenJFX-17.zip</tns:Filename>
+            <tns:Path>JavaFX</tns:Path>
+            <tns:Size>51195993</tns:Size>
+            <tns:Hash type="SHA256">D03F61535FE05C3E648CCF457F96289ED0E094BB119423BC612E80E11AD20502</tns:Hash>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:IncludePath>JavaFX/javafx-sdk-17.0.0.1/lib/*</tns:IncludePath>
+            <tns:ModuleName>javafx.controls</tns:ModuleName>
+            <tns:ModuleName>javafx.fxml</tns:ModuleName>
+            <tns:ModuleName>javafx.web</tns:ModuleName>
+            <tns:DownloadURL priority="0">https://download2.gluonhq.com/openjfx/17.0.0.1/openjfx-17.0.0.1_linux-x64_bin-sdk.zip</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/17/openjfx-17.0.0.1_linux-x64_bin-sdk.zip</tns:DownloadURL>
+        </tns:Extract>
+        <tns:Extract name="JavaFX">
+            <tns:Filename>OpenJFX-17.zip</tns:Filename>
+            <tns:Path>JavaFX</tns:Path>
+            <tns:Size>46908582</tns:Size>
+            <tns:Hash type="SHA256">A0F3C85B7697575272F0A4890063C6D35548057C32D8F95B7FA73A871AF0BCC9</tns:Hash>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:IncludePath>JavaFX/javafx-sdk-17.0.0.1/lib/*</tns:IncludePath>
+            <tns:ModuleName>javafx.controls</tns:ModuleName>
+            <tns:ModuleName>javafx.fxml</tns:ModuleName>
+            <tns:ModuleName>javafx.web</tns:ModuleName>
+            <tns:DownloadURL priority="0">https://download2.gluonhq.com/openjfx/17.0.0.1/openjfx-17.0.0.1_osx-x64_bin-sdk.zip</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/17/openjfx-17.0.0.1_osx-x64_bin-sdk.zip</tns:DownloadURL>
+        </tns:Extract>
+        <tns:Runtime name="Java" primary="true">
+            <tns:Filename>Java17.zip</tns:Filename>
+            <tns:Version>17</tns:Version>
+            <tns:Executable>jdk-17+35\bin\java.exe</tns:Executable>
+            <tns:Size>188690370</tns:Size>
+            <tns:Hash type="SHA256">79E1C949F8301EB0A5979BC245829A4419507D7F6AC567C870E5986DAF48C1DB</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_windows_hotspot_17_35.zip</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/17/OpenJDK17-jdk_x64_windows_hotspot_17_35.zip</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java" primary="true">
+            <tns:Filename>Java17.tar.gz</tns:Filename>
+            <tns:Version>17</tns:Version>
+            <tns:Executable>jdk-17+35/bin/java</tns:Executable>
+            <tns:Size>192014376</tns:Size>
+            <tns:Hash type="SHA256">6F1335D9A7855159F982DAC557420397BE9AA85F3F7BC84E111D25871C02C0C7</tns:Hash>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_linux_hotspot_17_35.tar.gz</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/17/OpenJDK17-jdk_x64_linux_hotspot_17_35.tar.gz</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java" primary="true">
+            <tns:Filename>Java17.tar.gz</tns:Filename>
+            <tns:Version>17</tns:Version>
+            <tns:Executable>jdk-17+35/Contents/Home/bin/java</tns:Executable>
+            <tns:Size>192417649</tns:Size>
+            <tns:Hash type="SHA256">E9DE8B1B62780FE99270A5B30F0645D7A91EDED60438BCF836A05FA7B93C182F</tns:Hash>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_mac_hotspot_17_35.tar.gz</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/17/OpenJDK17-jdk_x64_mac_hotspot_17_35.tar.gz</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java">
+            <tns:Filename>Java11.zip</tns:Filename>
+            <tns:Version>11</tns:Version>
+            <tns:Executable>jdk-11.0.12+7-jre\bin\java.exe</tns:Executable>
+            <tns:Size>42630785</tns:Size>
+            <tns:Hash type="SHA256">5E00DD1FA87749C819CA94D8F3F352E198DE44A9E2C09B0E75CC120A63EDEA87</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/11/OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java">
+            <tns:Filename>Java11.tar.gz</tns:Filename>
+            <tns:Version>11</tns:Version>
+            <tns:Executable>jdk-11.0.12+7-jre/bin/java</tns:Executable>
+            <tns:Size>42400222</tns:Size>
+            <tns:Hash type="SHA256">E813E270B7EA0A13F9C400CE5ABD4CB811AACBD536B8909E6C7F0E346F78348C</tns:Hash>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jre_x64_linux_hotspot_11.0.12_7.tar.gz</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/11/OpenJDK11U-jre_x64_linux_hotspot_11.0.12_7.tar.gz</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java">
+            <tns:Filename>Java11.tar.gz</tns:Filename>
+            <tns:Version>11</tns:Version>
+            <tns:Executable>jdk-11.0.12+7-jre/Contents/Home/bin/java</tns:Executable>
+            <tns:Size>43392141</tns:Size>
+            <tns:Hash type="SHA256">3DE9566D6E47EBDE10706D0D13E9B6E5777356E379FB376B431C32CD92367645</tns:Hash>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jre_x64_mac_hotspot_11.0.12_7.tar.gz</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/11/OpenJDK11U-jre_x64_mac_hotspot_11.0.12_7.tar.gz</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java">
+            <tns:Filename>Java8.zip</tns:Filename>
+            <tns:Version>8</tns:Version>
+            <tns:Executable>jdk8u302-b08-jre\bin\java.exe</tns:Executable>
+            <tns:Size>39038120</tns:Size>
+            <tns:Hash type="SHA256">4A9943A2C2E929728E3C31A213C80D36B186B085B401A8C6313101BD7A28C046</tns:Hash>
+            <tns:Platform>WINDOWS64</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jre_x64_windows_hotspot_8u302b08.zip</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/8/OpenJDK8U-jre_x64_windows_hotspot_8u302b08.zip</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java">
+            <tns:Filename>Java8.tar.gz</tns:Filename>
+            <tns:Version>8</tns:Version>
+            <tns:Executable>jdk8u302-b08-jre/bin/java</tns:Executable>
+            <tns:Size>41249161</tns:Size>
+            <tns:Hash type="SHA256">A74E63657AD04151A8F95202071D2895F1CC9295C910AD3C361FF1CC27395107</tns:Hash>
+            <tns:Platform>LINUX64</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jre_x64_linux_hotspot_8u302b08.tar.gz</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/8/OpenJDK8U-jre_x64_linux_hotspot_8u302b08.tar.gz</tns:DownloadURL>
+        </tns:Runtime>
+        <tns:Runtime name="Java">
+            <tns:Filename>Java8.tar.gz</tns:Filename>
+            <tns:Version>8</tns:Version>
+            <tns:Executable>jdk8u302-b08-jre/Contents/Home/bin/java</tns:Executable>
+            <tns:Size>44801719</tns:Size>
+            <tns:Hash type="SHA256">4E7306D505C76E663C791537E2543EC6F5E55D154A6DD9DF205104A2F016F40A</tns:Hash>
+            <tns:Platform>OSX</tns:Platform>
+            <tns:DownloadURL priority="0">https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jre_x64_mac_hotspot_8u302b08.tar.gz</tns:DownloadURL>
+            <tns:DownloadURL priority="1">https://files.mcupdater.com/mirror/8/OpenJDK8U-jre_x64_mac_hotspot_8u302b08.tar.gz</tns:DownloadURL>
+        </tns:Runtime>
+    </tns:Distribution>
+</tns:Distributions>
